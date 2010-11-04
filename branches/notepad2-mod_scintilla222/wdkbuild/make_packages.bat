@@ -3,6 +3,7 @@ SETLOCAL
 TITLE Building Notepad2...
 SET NOTEPAD_VERSION=4.1.24
 SET PERL_PATH=G:\Installation Programs\Programs\Compiling Stuff\Other\ActivePerl-5.12.2.1202-MSWin32-x86-293621
+SET PREFFIX=scintilla222
 
 CALL build.cmd
 CALL build_x64.cmd
@@ -40,12 +41,12 @@ COPY "..\ReadMe-mod.txt" "temp_zip\Readme.txt" /Y /V
 
 PUSHD "temp_zip"
 START "" /B /WAIT "..\..\distrib\tools\7za.exe" a -tzip -mx=9^
- "Notepad2-mod.%NOTEPAD_VERSION%_r%buildnum%_%2.zip" "License.txt" "Notepad2.exe"^
+ "Notepad2-mod.%NOTEPAD_VERSION%_r%buildnum%_%2_%PREFFIX%.zip" "License.txt" "Notepad2.exe"^
  "Notepad2.ini" "Notepad2.txt" "ReadMe.txt" >NUL
 IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
-ECHO:Notepad2-mod.%NOTEPAD_VERSION%_r%buildnum%_%2.zip created successfully!
-MOVE /Y "Notepad2-mod.%NOTEPAD_VERSION%_r%buildnum%_%2.zip" "..\packages" >NUL 2>&1
+ECHO:Notepad2-mod.%NOTEPAD_VERSION%_r%buildnum%_%2_%PREFFIX%.zip created successfully!
+MOVE /Y "Notepad2-mod.%NOTEPAD_VERSION%_r%buildnum%_%2_%PREFFIX%.zip" "..\packages" >NUL 2>&1
 ECHO.
 POPD
 RD /S /Q "temp_zip" >NUL 2>&1
@@ -109,12 +110,12 @@ IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 rem "%PERL_PATH%\perl\bin\perl.exe" addon_build.pl
 
 MD ..\wdkbuild\packages >NUL 2>&1
-rem MOVE setup.x86-32\addon.7z      ..\wdkbuild\packages\Notepad2-mod_Addon.x86-32.7z >NUL
-MOVE setup.x86-32\setupfull.exe ..\wdkbuild\packages\Notepad2-mod_Setup.x86-32.exe >NUL
-MOVE setup.x86-32\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent.x86-32.exe >NUL
-rem MOVE setup.x86-64\addon.7z      ..\wdkbuild\packages\Notepad2-mod_Addon.x86-64.7z >NUL
-MOVE setup.x86-64\setupfull.exe ..\wdkbuild\packages\Notepad2-mod_Setup.x86-64.exe >NUL
-MOVE setup.x86-64\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent.x86-64.exe >NUL
+rem MOVE setup.x86-32\addon.7z      ..\wdkbuild\packages\Notepad2-mod_Addon.x86-32_%PREFFIX%.7z >NUL
+MOVE setup.x86-32\setupfull.exe ..\wdkbuild\packages\Notepad2-mod_Setup.x86-32_%PREFFIX%.exe >NUL
+MOVE setup.x86-32\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent.x86-32_%PREFFIX%.exe >NUL
+rem MOVE setup.x86-64\addon.7z      ..\wdkbuild\packages\Notepad2-mod_Addon.x86-64_%PREFFIX%.7z >NUL
+MOVE setup.x86-64\setupfull.exe ..\wdkbuild\packages\Notepad2-mod_Setup.x86-64_%PREFFIX%.exe >NUL
+MOVE setup.x86-64\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent.x86-64_%PREFFIX%.exe >NUL
 
 RD setup.x86-32 setup.x86-64 >NUL 2>&1
 RD setup.x86-32 setup.x86-64 >NUL 2>&1
