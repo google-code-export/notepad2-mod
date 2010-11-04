@@ -12,8 +12,10 @@
 #include <stdio.h>
 #include <time.h>
 
+#if !defined(_WIN32_WINNT)
 #undef _WIN32_WINNT
-#define _WIN32_WINNT  0x0500
+#define _WIN32_WINNT 0x0500
+#endif
 #include <windows.h>
 #include <commctrl.h>
 #include <richedit.h>
