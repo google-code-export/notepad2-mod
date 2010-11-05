@@ -1,7 +1,6 @@
 // Microsoft Visual C++ generated resource script.
 //
 #include "resource.h"
-#include "Version.h"
 
 #define APSTUDIO_READONLY_SYMBOLS
 /////////////////////////////////////////////////////////////////////////////
@@ -266,9 +265,6 @@ BEGIN
         MENUITEM "Line &Numbers\tCtrl+Shift+N", IDM_VIEW_LINENUMBERS
         MENUITEM "Selection &Margin\tCtrl+Shift+M", IDM_VIEW_MARGIN
         MENUITEM SEPARATOR
-        MENUITEM "Code &Folding\tCtrl+Shift+Alt+F", IDM_VIEW_FOLDING
-        MENUITEM "&Toggle All Folds\tCtrl+Shift+F", IDM_VIEW_TOGGLEFOLDS
-        MENUITEM SEPARATOR
         MENUITEM "Zoom &In\tCtrl++",            IDM_VIEW_ZOOMIN
         MENUITEM "Zoom &Out\tCtrl+-",           IDM_VIEW_ZOOMOUT
         MENUITEM "Reset &Zoom\tCtrl+/",         IDM_VIEW_RESETZOOM
@@ -399,10 +395,6 @@ BEGIN
     "E",            IDM_EDIT_URLENCODE,     VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
     "F",            IDM_EDIT_FIND,          VIRTKEY, CONTROL, NOINVERT
-    "F",            IDM_VIEW_FOLDING,       VIRTKEY, SHIFT, CONTROL, ALT, 
-                                                    NOINVERT
-    "F",            IDM_VIEW_TOGGLEFOLDS,   VIRTKEY, SHIFT, CONTROL, 
-                                                    NOINVERT
     "G",            IDM_EDIT_GOTOLINE,      VIRTKEY, CONTROL, NOINVERT
     "G",            IDM_VIEW_SHOWINDENTGUIDES, VIRTKEY, SHIFT, CONTROL, 
                                                     NOINVERT
@@ -688,7 +680,7 @@ BEGIN
     SCROLLBAR       IDC_RESIZEGRIP3,7,112,10,10
 END
 
-IDD_DEFENCODING DIALOGEX 0, 0, 180, 118
+IDD_DEFENCODING DIALOGEX 0, 0, 180, 108
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | 
     WS_SYSMENU
 CAPTION "Encoding"
@@ -702,12 +694,10 @@ BEGIN
                     WS_TABSTOP,7,43,124,10
     CONTROL         "Open 7-bit &ASCII files in UTF-8 mode.",IDC_ASCIIASUTF8,
                     "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,53,136,10
-    CONTROL         "Open 8-bit *.&nfo/diz files in DOS-437 mode.",IDC_NFOASOEM,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,63,166,10
     CONTROL         "Don't parse encoding &tags.",IDC_ENCODINGFROMFILEVARS,
-                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,73,102,10
-    DEFPUSHBUTTON   "OK",IDOK,68,97,50,14
-    PUSHBUTTON      "Cancel",IDCANCEL,123,97,50,14
+                    "Button",BS_AUTOCHECKBOX | WS_TABSTOP,7,63,102,10
+    DEFPUSHBUTTON   "OK",IDOK,68,87,50,14
+    PUSHBUTTON      "Cancel",IDCANCEL,123,87,50,14
 END
 
 IDD_DEFEOLMODE DIALOGEX 0, 0, 180, 78
@@ -1355,13 +1345,13 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_BUILD,VERSION_REV
- PRODUCTVERSION VERSION_MAJOR,VERSION_MINOR,VERSION_BUILD,VERSION_REV
+ FILEVERSION 4,1,24,0
+ PRODUCTVERSION 4,1,24,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
- FILEFLAGS VS_FF_PATCHED | VS_FF_DEBUG
+ FILEFLAGS 0x29L
 #else
- FILEFLAGS VS_FF_PATCHED
+ FILEFLAGS 0x28L
 #endif
  FILEOS 0x4L
  FILETYPE 0x1L
@@ -1372,13 +1362,10 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "FileDescription", "Notepad2"
-            //VALUE "CompanyName", "Florian Balmer"
-            VALUE "FileVersion", STRINGIFY(VERSION_MAJOR) ", " STRINGIFY(VERSION_MINOR) ", " STRINGIFY(VERSION_BUILD) ", " STRINGIFY(VERSION_REV)
-            VALUE "ProductVersion", STRINGIFY(VERSION_MAJOR) ", " STRINGIFY(VERSION_MINOR) ", " STRINGIFY(VERSION_BUILD) ", " STRINGIFY(VERSION_REV)
+            VALUE "FileVersion", "4.1.24"
             VALUE "InternalName", "Notepad2"
             VALUE "LegalCopyright", "© Florian Balmer 2004-2010"
             VALUE "OriginalFilename", "Notepad2.exe"
-            VALUE "ProductName", "Notepad2"
         END
     END
     BLOCK "VarFileInfo"
@@ -1446,7 +1433,6 @@ BEGIN
     IDT_FILE_PRINT          "Print"
     IDT_FILE_OPENFAV        "Favorites"
     IDT_FILE_ADDTOFAV       "Add to Favorites"
-    IDT_VIEW_TOGGLEFOLDS    "Toggle All Folds"
 END
 
 STRINGTABLE 

@@ -17,9 +17,7 @@
 *
 *
 ******************************************************************************/
-#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x501
-#endif
 #include <windows.h>
 #include <shlwapi.h>
 #include <commctrl.h>
@@ -34,7 +32,6 @@
 #include "scilexer.h"
 #include "styles.h"
 #include "edit.h"
-#include "scicall.h"
 #include "resource.h"
 
 
@@ -66,11 +63,9 @@ extern int iDefaultCodePage;
 extern int iDefaultCharSet;
 extern BOOL bSkipUnicodeDetection;
 extern BOOL bLoadASCIIasUTF8;
-extern BOOL bLoadNFOasOEM;
 extern int iSrcEncoding;
 extern int iWeakSrcEncoding;
 
-int g_DOSEncoding;
 
 // Supported Encodings
 WCHAR wchANSI[8] = L"";
@@ -539,7 +534,7 @@ BOOL EditCopyAppend(HWND hwnd)
   if (iCurPos != iAnchorPos) {
 
     if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0)) {
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
       return(FALSE);
     }
 
@@ -633,20 +628,6 @@ void Encoding_InitDefaults() {
   wsprintf(wchANSI,L" (%i)",GetACP());
   mEncoding[CPI_OEM].uCodePage = GetOEMCP();
   wsprintf(wchOEM,L" (%i)",mEncoding[CPI_OEM].uCodePage);
-
-  g_DOSEncoding = CPI_OEM;
-
-  // Try to set the DOS encoding to DOS-437 if the default OEMCP is not DOS-437
-  if (mEncoding[g_DOSEncoding].uCodePage != 437)
-  {
-    int i;
-    for (i = CPI_UTF7 + 1; i < COUNTOF(mEncoding); ++i) {
-      if (mEncoding[i].uCodePage == 437 && Encoding_IsValid(i)) {
-        g_DOSEncoding = i;
-        break;
-      }
-    }
-  }
 }
 
 
@@ -847,7 +828,7 @@ BOOL Encoding_GetFromListView(HWND hwnd,int *pidEncoding)
       return (TRUE);
     }
     else
-      MsgBox(MBWARN,IDS_ERR_ENCODINGNA);
+      MsgBox(MBINFO,IDS_ERR_ENCODINGNA);
   }
   return(FALSE);
 }
@@ -932,7 +913,7 @@ BOOL Encoding_GetFromComboboxEx(HWND hwnd,int *pidEncoding)
       return (TRUE);
     }
     else
-      MsgBox(MBWARN,IDS_ERR_ENCODINGNA);
+      MsgBox(MBINFO,IDS_ERR_ENCODINGNA);
   }
   return(FALSE);
 }
@@ -955,8 +936,8 @@ BOOL IsUnicode(const char* pBuffer,int cb,LPBOOL lpbBOM,LPBOOL lpbReverse)
   else
     bIsTextUnicode = FALSE;
 
-  bHasBOM  = (*((UNALIGNED PWCHAR)pBuffer) == 0xFEFF);
-  bHasRBOM = (*((UNALIGNED PWCHAR)pBuffer) == 0xFFFE);
+  bHasBOM  = (*pBuffer == '\xFF' && *(pBuffer+1) == '\xFE');
+  bHasRBOM = (*pBuffer == '\xFE' && *(pBuffer+1) == '\xFF');
 
   /*{
     char szBuf[512];
@@ -995,7 +976,12 @@ BOOL IsUnicode(const char* pBuffer,int cb,LPBOOL lpbBOM,LPBOOL lpbReverse)
   if (i == 0xFFFF) // i doesn't seem to have been modified ...
     i = 0;
 
-  if (bIsTextUnicode || bHasBOM || bHasRBOM) {
+  if (bIsTextUnicode || bHasBOM || bHasRBOM ||
+        ((i & (IS_TEXT_UNICODE_UNICODE_MASK | IS_TEXT_UNICODE_REVERSE_MASK)) &&
+       !((i & IS_TEXT_UNICODE_UNICODE_MASK) && (i & IS_TEXT_UNICODE_REVERSE_MASK)) &&
+        !(i & IS_TEXT_UNICODE_ODD_LENGTH) &&
+        !(i & IS_TEXT_UNICODE_ILLEGAL_CHARS && !(i & IS_TEXT_UNICODE_REVERSE_SIGNATURE)) &&
+        !((i & IS_TEXT_UNICODE_REVERSE_MASK) == IS_TEXT_UNICODE_REVERSE_STATISTICS))) {
 
     if (lpbBOM)
       *lpbBOM = (bHasBOM || bHasRBOM ||
@@ -1236,8 +1222,6 @@ BOOL EditLoadFile(
   BOOL bBOM;
   BOOL bReverse;
 
-  BOOL bPreferOEM = FALSE;
-
   *pbUnicodeErr = FALSE;
   *pbFileTooBig = FALSE;
 
@@ -1284,17 +1268,10 @@ BOOL EditLoadFile(
     return FALSE;
   }
 
-  if (bLoadNFOasOEM)
-  {
-    PCWSTR pszExt = pszFile + lstrlen(pszFile) - 4;
-    if (pszExt >= pszFile && !(lstrcmpi(pszExt, L".nfo") && lstrcmpi(pszExt, L".diz")))
-      bPreferOEM = TRUE;
-  }
-
   if (!Encoding_IsValid(iDefaultEncoding))
     iDefaultEncoding = CPI_DEFAULT;
 
-  _iDefaultEncoding = (bPreferOEM) ? g_DOSEncoding : iDefaultEncoding;
+  _iDefaultEncoding = iDefaultEncoding;
   if (iWeakSrcEncoding != -1 && Encoding_IsValid(iWeakSrcEncoding))
     _iDefaultEncoding = iWeakSrcEncoding;
 
@@ -1304,7 +1281,7 @@ BOOL EditLoadFile(
     FileVars_Init(NULL,0,&fvCurFile);
     *iEOLMode = iLineEndings[iDefaultEOLMode];
     if (iSrcEncoding == -1) {
-      if (bLoadASCIIasUTF8 && !bPreferOEM)
+      if (bLoadASCIIasUTF8)
         *iEncoding = CPI_UTF8;
       else
         *iEncoding = _iDefaultEncoding;
@@ -1364,9 +1341,8 @@ BOOL EditLoadFile(
               (IsUTF8(lpData,cbData) &&
               (((UTF8_mbslen_bytes(UTF8StringStart(lpData)) - 1 !=
                 UTF8_mbslen(UTF8StringStart(lpData),IsUTF8Signature(lpData) ? cbData-3 : cbData)) ||
-                (!bPreferOEM && (
                 mEncoding[_iDefaultEncoding].uFlags & NCP_UTF8 ||
-                bLoadASCIIasUTF8 )) ))))) && !(FileVars_IsNonUTF8(&fvCurFile) &&
+                bLoadASCIIasUTF8))))) && !(FileVars_IsNonUTF8(&fvCurFile) &&
                   (iSrcEncoding != CPI_UTF8 && iSrcEncoding != CPI_UTF8SIGN)))
     {
       SendMessage(hwnd,SCI_SETCODEPAGE,SC_CP_UTF8,0);
@@ -1708,7 +1684,7 @@ void EditMakeUppercase(HWND hwnd)
       GlobalFree(pszTextW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -1773,7 +1749,7 @@ void EditMakeLowercase(HWND hwnd)
       GlobalFree(pszTextW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -1843,7 +1819,7 @@ void EditInvertCase(HWND hwnd)
       GlobalFree(pszTextW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -1924,7 +1900,7 @@ void EditTitleCase(HWND hwnd)
       GlobalFree(pszTextW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -2006,7 +1982,7 @@ void EditSentenceCase(HWND hwnd)
       GlobalFree(pszTextW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -2092,7 +2068,7 @@ void EditURLEncode(HWND hwnd)
       LocalFree(pszEscapedW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -2178,7 +2154,7 @@ void EditURLDecode(HWND hwnd)
       LocalFree(pszUnescapedW);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -2212,7 +2188,7 @@ void EditEscapeCChars(HWND hwnd) {
       SendMessage(hwnd,SCI_ENDUNDOACTION,0,0);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -2246,7 +2222,7 @@ void EditUnescapeCChars(HWND hwnd) {
       SendMessage(hwnd,SCI_ENDUNDOACTION,0,0);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
 }
 
@@ -2318,7 +2294,7 @@ void EditModifyNumber(HWND hwnd,BOOL bIncrease) {
     }
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -2348,7 +2324,7 @@ void EditTabsToSpaces(HWND hwnd,int nTabWidth,BOOL bOnlyIndentingWS)
   BOOL bModified = FALSE;
 
   if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0)) {
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
     return;
   }
 
@@ -2484,7 +2460,7 @@ void EditSpacesToTabs(HWND hwnd,int nTabWidth,BOOL bOnlyIndentingWS)
   BOOL bModified = FALSE;
 
   if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0)) {
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
     return;
   }
 
@@ -2705,7 +2681,7 @@ void EditMoveUp(HWND hwnd)
     }
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -2818,7 +2794,7 @@ void EditMoveDown(HWND hwnd)
     }
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -2919,7 +2895,7 @@ void EditModifyLines(HWND hwnd,LPCWSTR pwszPrefix,LPCWSTR pwszAppend)
 
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -2985,7 +2961,7 @@ void EditEncloseSelection(HWND hwnd,LPCWSTR pwszOpen,LPCWSTR pwszClose)
 
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -3102,7 +3078,7 @@ void EditToggleLineComments(HWND hwnd,LPCWSTR pwszComment,BOOL bInsertAtStart)
 
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -3270,7 +3246,7 @@ void EditStripFirstCharacter(HWND hwnd)
     SendMessage(hwnd,SCI_ENDUNDOACTION,0,0);
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -3318,7 +3294,7 @@ void EditStripLastCharacter(HWND hwnd)
     SendMessage(hwnd,SCI_ENDUNDOACTION,0,0);
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -3338,7 +3314,7 @@ void EditStripTrailingBlanks(HWND hwnd,BOOL bIgnoreSelection)
       EditReplaceAllInSelection(hwnd,&efrTrim,FALSE);
     }
     else
-      MsgBox(MBWARN,IDS_SELRECT);
+      MsgBox(MBINFO,IDS_SELRECT);
   }
   // Code from SciTE...
   else
@@ -3471,7 +3447,7 @@ void EditCompressSpaces(HWND hwnd)
       LocalFree(pszOut);
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -3521,7 +3497,7 @@ void EditRemoveBlankLines(HWND hwnd)
     SendMessage(hwnd,SCI_ENDUNDOACTION,0,0);
   }
   else
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
 }
 
 
@@ -3553,7 +3529,7 @@ void EditWrapToColumn(HWND hwnd,int nColumn/*,int nTabWidth*/)
   BOOL bModified = FALSE;
 
   if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0)) {
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
     return;
   }
 
@@ -3763,7 +3739,7 @@ void EditJoinLinesEx(HWND hwnd)
   BOOL bModified = FALSE;
 
   if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0)) {
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
     return;
   }
 
@@ -3915,7 +3891,7 @@ void EditSortLines(HWND hwnd,int iSortFlags)
   char mszEOL[] = "\r\n";
 
   if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0)) {
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
     return;
   }
 
@@ -4080,9 +4056,24 @@ void EditJumpTo(HWND hwnd,int iNewLine,int iNewCol)
       iNewPos = SendMessage(hwnd,SCI_POSITIONAFTER,(WPARAM)iNewPos,0);
     }
 
+    SendMessage(hwnd,SCI_SETXCARETPOLICY,CARET_SLOP|CARET_STRICT|CARET_EVEN,50);
+    SendMessage(hwnd,SCI_SETYCARETPOLICY,CARET_SLOP|CARET_STRICT|CARET_EVEN,5);
+
     iNewPos = min(iNewPos,iLineEndPos);
-    EditSelectEx(hwnd,-1,iNewPos); // SCI_GOTOPOS(pos) is equivalent to SCI_SETSEL(-1, pos)
+    SendMessage(hwnd,SCI_GOTOPOS,(WPARAM)iNewPos,0);
     SendMessage(hwnd,SCI_CHOOSECARETX,0,0);
+
+    //iScrLines = SendMessage(hwnd,SCI_LINESONSCREEN,0,0);
+    //iTopLine = SendMessage(hwnd,SCI_GETFIRSTVISIBLELINE,0,0);
+    //if (iScrLines > 20) {
+    //  if (iNewLine - iTopLine < 5)
+    //    SendMessage(hwnd,SCI_LINESCROLL,0,(LPARAM)max(iNewLine-5,0)-iTopLine);
+    //  else if (iNewLine - (iTopLine + iScrLines) > -5)
+    //    SendMessage(hwnd,SCI_LINESCROLL,0,(LPARAM)max(iNewLine-iScrLines+5,0)-iTopLine);
+    //}
+
+    SendMessage(hwnd,SCI_SETXCARETPOLICY,CARET_SLOP|CARET_EVEN,50);
+    SendMessage(hwnd,SCI_SETYCARETPOLICY,CARET_EVEN,0);
   }
 }
 
@@ -4099,12 +4090,6 @@ void EditSelectEx(HWND hwnd,int iAnchorPos,int iCurrentPos)
 
   int iNewLine = SendMessage(hwnd,SCI_LINEFROMPOSITION,(WPARAM)iCurrentPos,0);
   int iAnchorLine = SendMessage(hwnd,SCI_LINEFROMPOSITION,(WPARAM)iAnchorPos,0);
-
-  // Ensure that the first and last lines of a selection are always unfolded
-  // This needs to be done *before* the SCI_SETSEL message
-  SciCall_EnsureVisible(iAnchorLine);
-  if (iAnchorLine != iNewLine)
-    SciCall_EnsureVisible(iNewLine);
 
   SendMessage(hwnd,SCI_SETXCARETPOLICY,CARET_SLOP|CARET_STRICT|CARET_EVEN,50);
   SendMessage(hwnd,SCI_SETYCARETPOLICY,CARET_SLOP|CARET_STRICT|CARET_EVEN,5);
@@ -5011,7 +4996,7 @@ BOOL EditReplaceAllInSelection(HWND hwnd,LPCEDITFINDREPLACE lpefr,BOOL bShowInfo
 
   if (SC_SEL_RECTANGLE == SendMessage(hwnd,SCI_GETSELECTIONMODE,0,0))
   {
-    MsgBox(MBWARN,IDS_SELRECT);
+    MsgBox(MBINFO,IDS_SELRECT);
     return FALSE;
   }
 
@@ -5658,7 +5643,7 @@ BOOL FileVars_Init(char *lpData,DWORD cbData,LPFILEVARS lpfv) {
       lpfv->mask |= FV_MODE;
   }
 
-  /*if (lpfv->mask == 0 && cbData > COUNTOF(tch)) {
+  if (lpfv->mask == 0 && cbData > COUNTOF(tch)) {
 
     lstrcpynA(tch,lpData+cbData-COUNTOF(tch)+1,COUNTOF(tch));
 
@@ -5698,7 +5683,7 @@ BOOL FileVars_Init(char *lpData,DWORD cbData,LPFILEVARS lpfv) {
       if (FileVars_ParseStr(tch,"mode",lpfv->tchMode,COUNTOF(lpfv->tchMode)))
         lpfv->mask |= FV_MODE;
     }
-  }*/
+  }
 
   if (lpfv->mask & FV_ENCODING)
     lpfv->iEncoding = Encoding_MatchA(lpfv->tchEncoding);

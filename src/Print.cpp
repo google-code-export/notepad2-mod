@@ -18,9 +18,7 @@
 *
 *
 ******************************************************************************/
-#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x501
-#endif
 #include <windows.h>
 #include <commctrl.h>
 #include <shlwapi.h>
@@ -32,7 +30,6 @@
 extern "C" {
 #include "dialogs.h"
 #include "helpers.h"
-#include "scicall.h"
 }
 #include "resource.h"
 
@@ -78,7 +75,7 @@ extern "C" BOOL EditPrint(HWND hwnd,LPCWSTR pszDocTitle,LPCWSTR pszPageFormat)
 
   // Don't print empty documents
   if (SendMessage(hwnd,SCI_GETLENGTH,0,0) == 0) {
-    MsgBox(MBWARN,IDS_PRINT_EMPTY);
+    MsgBox(MBINFO,IDS_PRINT_EMPTY);
     return TRUE;
   }
 

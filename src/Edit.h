@@ -21,7 +21,7 @@
 
 
 // extern "C" declarations of Scintilla functions
-BOOL Scintilla_RegisterClasses(void *hInstance);
+BOOL Scintilla_RegisterClasses(HINSTANCE);
 BOOL Scintilla_ReleaseResources();
 
 
@@ -112,8 +112,6 @@ BOOL  EditSortDlg(HWND,int*);
 BOOL  EditPrint(HWND,LPCWSTR,LPCWSTR);
 void  EditPrintSetup(HWND);
 void  EditPrintInit();
-
-extern int g_DOSEncoding;
 
 #define NCP_DEFAULT            1
 #define NCP_UTF8               2

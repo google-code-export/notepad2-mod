@@ -17,9 +17,7 @@
 *
 *
 ******************************************************************************/
-#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x501
-#endif
 #include <windows.h>
 #include <commctrl.h>
 #include <shlobj.h>
@@ -36,7 +34,6 @@
 #include "helpers.h"
 #include "dialogs.h"
 #include "notepad2.h"
-#include "scicall.h"
 #include "resource.h"
 
 
@@ -55,9 +52,8 @@ HWND      hwndMain;
 HWND      hwndNextCBChain = NULL;
 HWND      hDlgFindReplace = NULL;
 
-#define NUMTOOLBITMAPS  24
+#define NUMTOOLBITMAPS  23
 #define NUMINITIALTOOLS 24
-#define MARGIN_FOLD_INDEX 2
 
 TBBUTTON  tbbMainWnd[] = { {0,IDT_FILE_NEW,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
                            {1,IDT_FILE_OPEN,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
@@ -88,8 +84,7 @@ TBBUTTON  tbbMainWnd[] = { {0,IDT_FILE_NEW,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
                            {19,IDT_EDIT_CLEAR,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
                            {20,IDT_FILE_PRINT,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
                            {21,IDT_FILE_OPENFAV,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
-                           {22,IDT_FILE_ADDTOFAV,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0},
-                           {23,IDT_VIEW_TOGGLEFOLDS,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0} };
+                           {22,IDT_FILE_ADDTOFAV,TBSTATE_ENABLED,TBSTYLE_BUTTON,0,0} };
 
 WCHAR      szIniFile[MAX_PATH] = L"";
 WCHAR      szIniFile2[MAX_PATH] = L"";
@@ -131,13 +126,11 @@ int       iLongLineMode;
 int       iWrapCol = 0;
 BOOL      bShowSelectionMargin;
 BOOL      bShowLineNumbers;
-BOOL      bShowCodeFolding;
 BOOL      bViewWhiteSpace;
 BOOL      bViewEOLs;
 int       iDefaultEncoding;
 BOOL      bSkipUnicodeDetection;
 BOOL      bLoadASCIIasUTF8;
-BOOL      bLoadNFOasOEM;
 BOOL      bNoEncodingTags;
 int       iSrcEncoding = -1;
 int       iWeakSrcEncoding = -1;
@@ -260,7 +253,6 @@ WCHAR     wchWndClass[16] = WC_NOTEPAD2;
 
 LPMALLOC  g_lpMalloc;
 HINSTANCE g_hInstance;
-HANDLE    g_hScintilla;
 UINT16    g_uWinVer;
 WCHAR     g_wchAppUserModelID[64];
 
@@ -295,191 +287,6 @@ int flagQuietCreate        = 0;
 int flagUseSystemMRU       = 0;
 int flagRelaunchElevated   = 0;
 int flagDisplayHelp        = 0;
-
-
-
-//==============================================================================
-//
-//  Folding Functions
-//
-//
-typedef enum {
-  EXPAND =  1,
-  SNIFF  =  0,
-  FOLD   = -1
-} FOLD_ACTION;
-
-#define FOLD_CHILDREN SCMOD_CTRL
-#define FOLD_SIBLINGS SCMOD_SHIFT
-
-BOOL __stdcall FoldToggleNode( int ln, FOLD_ACTION action )
-{
-  BOOL fExpanded = SciCall_GetFoldExpanded(ln);
-
-  if ((action == FOLD && fExpanded) || (action == EXPAND && !fExpanded))
-  {
-    SciCall_ToggleFold(ln);
-    return(TRUE);
-  }
-
-  return(FALSE);
-}
-
-void __stdcall FoldToggleAll( FOLD_ACTION action )
-{
-  BOOL fToggled = FALSE;
-  int lnTotal = SciCall_GetLineCount();
-  int ln;
-
-  for (ln = 0; ln < lnTotal; ++ln)
-  {
-    if (SciCall_GetFoldLevel(ln) & SC_FOLDLEVELHEADERFLAG)
-    {
-      if (action == SNIFF)
-        action = SciCall_GetFoldExpanded(ln) ? FOLD : EXPAND;
-
-      if (FoldToggleNode(ln, action))
-        fToggled = TRUE;
-    }
-  }
-
-  if (fToggled)
-  {
-    SciCall_SetXCaretPolicy(CARET_SLOP|CARET_STRICT|CARET_EVEN,50);
-    SciCall_SetYCaretPolicy(CARET_SLOP|CARET_STRICT|CARET_EVEN,5);
-    SciCall_ScrollCaret();
-    SciCall_SetXCaretPolicy(CARET_SLOP|CARET_EVEN,50);
-    SciCall_SetYCaretPolicy(CARET_EVEN,0);
-  }
-}
-
-void __stdcall FoldPerformAction( int ln, int mode, FOLD_ACTION action )
-{
-  if (action == SNIFF)
-    action = SciCall_GetFoldExpanded(ln) ? FOLD : EXPAND;
-
-  if (mode & (FOLD_CHILDREN | FOLD_SIBLINGS))
-  {
-    // ln/lvNode: line and level of the source of this fold action
-    int lnNode = ln;
-    int lvNode = SciCall_GetFoldLevel(lnNode) & SC_FOLDLEVELNUMBERMASK;
-    int lnTotal = SciCall_GetLineCount();
-
-    // lvStop: the level over which we should not cross
-    int lvStop = lvNode;
-
-    if (mode & FOLD_SIBLINGS)
-    {
-      ln = SciCall_GetFoldParent(lnNode) + 1;  // -1 + 1 = 0 if no parent
-      --lvStop;
-    }
-
-    for ( ; ln < lnTotal; ++ln)
-    {
-      int lv = SciCall_GetFoldLevel(ln);
-      BOOL fHeader = lv & SC_FOLDLEVELHEADERFLAG;
-      lv &= SC_FOLDLEVELNUMBERMASK;
-
-      if (lv < lvStop || (lv == lvStop && fHeader && ln != lnNode))
-        return;
-      else if (fHeader && (lv == lvNode || (lv > lvNode && mode & FOLD_CHILDREN)))
-        FoldToggleNode(ln, action);
-    }
-  }
-  else
-  {
-    FoldToggleNode(ln, action);
-  }
-}
-
-void __stdcall FoldClick( int ln, int mode )
-{
-  static struct {
-    int ln;
-    int mode;
-    DWORD dwTickCount;
-  } prev;
-
-  BOOL fGotoFoldPoint = mode & FOLD_SIBLINGS;
-
-  if (!(SciCall_GetFoldLevel(ln) & SC_FOLDLEVELHEADERFLAG))
-  {
-    // Not a fold point: need to look for a double-click
-
-    if ( prev.ln == ln && prev.mode == mode &&
-         GetTickCount() - prev.dwTickCount <= GetDoubleClickTime() )
-    {
-      prev.ln = -1;  // Prevent re-triggering on a triple-click
-
-      ln = SciCall_GetFoldParent(ln);
-
-      if (ln >= 0 && SciCall_GetFoldExpanded(ln))
-        fGotoFoldPoint = TRUE;
-      else
-        return;
-    }
-    else
-    {
-      // Save the info needed to match this click with the next click
-      prev.ln = ln;
-      prev.mode = mode;
-      prev.dwTickCount = GetTickCount();
-      return;
-    }
-  }
-
-  FoldPerformAction(ln, mode, SNIFF);
-
-  if (fGotoFoldPoint)
-    EditJumpTo(hwndEdit, ln + 1, 0);
-}
-
-void __stdcall FoldAltArrow( int key, int mode )
-{
-  // Because Alt-Shift is already in use (and because the sibling fold feature
-  // is not as useful from the keyboard), only the Ctrl modifier is supported
-
-  if (bShowCodeFolding && (mode & (SCMOD_ALT | SCMOD_SHIFT)) == SCMOD_ALT)
-  {
-    int ln = SciCall_LineFromPosition(SciCall_GetCurrentPos());
-
-    // Jump to the next visible fold point
-    if (key == SCK_DOWN && !(mode & SCMOD_CTRL))
-    {
-      int lnTotal = SciCall_GetLineCount();
-      for (ln = ln + 1; ln < lnTotal; ++ln)
-      {
-        if ( SciCall_GetFoldLevel(ln) & SC_FOLDLEVELHEADERFLAG &&
-             SciCall_GetLineVisible(ln) )
-        {
-          EditJumpTo(hwndEdit, ln + 1, 0);
-          return;
-        }
-      }
-    }
-
-    // Jump to the previous visible fold point
-    else if (key == SCK_UP && !(mode & SCMOD_CTRL))
-    {
-      for (ln = ln - 1; ln >= 0; --ln)
-      {
-        if ( SciCall_GetFoldLevel(ln) & SC_FOLDLEVELHEADERFLAG &&
-             SciCall_GetLineVisible(ln) )
-        {
-          EditJumpTo(hwndEdit, ln + 1, 0);
-          return;
-        }
-      }
-    }
-
-    // Perform a fold/unfold operation
-    else if (SciCall_GetFoldLevel(ln) & SC_FOLDLEVELHEADERFLAG)
-    {
-      if (key == SCK_LEFT ) FoldPerformAction(ln, mode, FOLD);
-      if (key == SCK_RIGHT) FoldPerformAction(ln, mode, EXPAND);
-    }
-  }
-}
 
 
 
@@ -1087,7 +894,7 @@ LRESULT CALLBACK MainWndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
           FileLoad(FALSE,FALSE,FALSE,FALSE,szBuf);
 
         if (DragQueryFile(hDrop,(UINT)(-1),NULL,0) > 1)
-          MsgBox(MBWARN,IDS_ERR_DROP);
+          MsgBox(MBINFO,IDS_ERR_DROP);
 
         DragFinish(hDrop);
       }
@@ -1429,7 +1236,6 @@ LRESULT MsgCreate(HWND hwnd,WPARAM wParam,LPARAM lParam)
 
   // Setup edit control
   hwndEdit = EditCreate(hwnd);
-  InitScintillaHandle(hwndEdit);
 
   // Tabs
   SendMessage(hwndEdit,SCI_SETUSETABS,!bTabsAsSpaces,0);
@@ -1493,25 +1299,6 @@ LRESULT MsgCreate(HWND hwnd,WPARAM wParam,LPARAM lParam)
   UpdateLineNumberWidth();
   //SendMessage(hwndEdit,SCI_SETMARGINWIDTHN,0,
   //  (bShowLineNumbers)?SendMessage(hwndEdit,SCI_TEXTWIDTH,STYLE_LINENUMBER,(LPARAM)L"_999999_"):0);
-
-  // Code folding
-  SciCall_SetMarginType(MARGIN_FOLD_INDEX, SC_MARGIN_SYMBOL);
-  SciCall_SetMarginMask(MARGIN_FOLD_INDEX, SC_MASK_FOLDERS);
-  SciCall_SetMarginWidth(MARGIN_FOLD_INDEX, (bShowCodeFolding) ? 11 : 0);
-  SciCall_SetMarginSensitive(MARGIN_FOLD_INDEX, TRUE);
-  SciCall_SetProperty("fold", "1");
-  SciCall_SetProperty("fold.compact", "0");
-  SciCall_SetProperty("fold.comment", "1");
-  SciCall_SetProperty("fold.html", "1");
-  SciCall_SetProperty("fold.preprocessor", "1");
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDEROPEN, SC_MARK_BOXMINUS);
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDER, SC_MARK_BOXPLUS);
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDERSUB, SC_MARK_VLINE);
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDERTAIL, SC_MARK_LCORNER);
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDEREND, SC_MARK_BOXPLUSCONNECTED);
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDEROPENMID, SC_MARK_BOXMINUSCONNECTED);
-  SciCall_MarkerDefine(SC_MARKNUM_FOLDERMIDTAIL, SC_MARK_TCORNER);
-  SciCall_SetFoldFlags(16);
 
   // Nonprinting characters
   SendMessage(hwndEdit,SCI_SETVIEWWS,(bViewWhiteSpace)?SCWS_VISIBLEALWAYS:SCWS_INVISIBLE,0);
@@ -2028,7 +1815,7 @@ void MsgInitMenu(HWND hwnd,WPARAM wParam,LPARAM lParam)
   EnableCmd(hmenu,IDM_EDIT_STREAMCOMMENT,
     !(i == SCLEX_NULL || i == SCLEX_VBSCRIPT || i == SCLEX_MAKEFILE || i == SCLEX_VB || i == SCLEX_ASM ||
       i == SCLEX_SQL || i == SCLEX_PERL || i == SCLEX_PYTHON || i == SCLEX_PROPERTIES ||i == SCLEX_CONF ||
-      i == SCLEX_POWERSHELL || i == SCLEX_BATCH || i == SCLEX_DIFF || i == SCLEX_BASH || i == SCLEX_TCL || i == SCLEX_AU3 || i == SCLEX_LATEX));
+      i == SCLEX_POWERSHELL || i == SCLEX_BATCH || i == SCLEX_DIFF));
 
   EnableCmd(hmenu,IDM_EDIT_INSERT_ENCODING,*mEncoding[iEncoding].pszParseNames);
 
@@ -2055,8 +1842,6 @@ void MsgInitMenu(HWND hwnd,WPARAM wParam,LPARAM lParam)
   CheckCmd(hmenu,IDM_VIEW_AUTOINDENTTEXT,bAutoIndent);
   CheckCmd(hmenu,IDM_VIEW_LINENUMBERS,bShowLineNumbers);
   CheckCmd(hmenu,IDM_VIEW_MARGIN,bShowSelectionMargin);
-  CheckCmd(hmenu,IDM_VIEW_FOLDING,bShowCodeFolding);
-  EnableCmd(hmenu,IDM_VIEW_TOGGLEFOLDS,bShowCodeFolding);
   CheckCmd(hmenu,IDM_VIEW_SHOWWHITESPACE,bViewWhiteSpace);
   CheckCmd(hmenu,IDM_VIEW_SHOWEOLS,bViewEOLs);
   CheckCmd(hmenu,IDM_VIEW_WORDWRAPSYMBOLS,bShowWordWrapSymbols);
@@ -3194,8 +2979,6 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
         case SCLEX_PERL:
         case SCLEX_PYTHON:
         case SCLEX_CONF:
-        case SCLEX_BASH:
-        case SCLEX_TCL:
         case SCLEX_POWERSHELL:
           SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORWAIT,0);
           EditToggleLineComments(hwndEdit,L"#",TRUE);
@@ -3203,9 +2986,6 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
           break;
         case SCLEX_ASM:
         case SCLEX_PROPERTIES:
-        case SCLEX_AU3:
-        case SCLEX_NSIS: // # could also be used instead
-        case SCLEX_INNOSETUP:
           SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORWAIT,0);
           EditToggleLineComments(hwndEdit,L";",TRUE);
           SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORNORMAL,0);
@@ -3218,11 +2998,6 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
         case SCLEX_BATCH:
           SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORWAIT,0);
           EditToggleLineComments(hwndEdit,L"rem ",TRUE);
-          SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORNORMAL,0);
-          break;
-        case SCLEX_LATEX:
-          SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORWAIT,0);
-          EditToggleLineComments(hwndEdit,L"%",TRUE);
           SendMessage(hwndEdit,SCI_SETCURSOR,SC_CURSORNORMAL,0);
           break;
       }
@@ -3244,20 +3019,14 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
         case SCLEX_POWERSHELL:
         case SCLEX_BATCH:
         case SCLEX_DIFF:
-        case SCLEX_BASH:
-        case SCLEX_TCL:
-        case SCLEX_AU3:
-        case SCLEX_LATEX:
           break;
         case SCLEX_HTML:
         case SCLEX_XML:
         case SCLEX_CSS:
         case SCLEX_CPP:
-        case SCLEX_NSIS:
           EditEncloseSelection(hwndEdit,L"/*",L"*/");
           break;
         case SCLEX_PASCAL:
-        case SCLEX_INNOSETUP:
           EditEncloseSelection(hwndEdit,L"{",L"}");
       }
       break;
@@ -3604,20 +3373,6 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
       break;
 
 
-    case IDM_VIEW_FOLDING:
-      bShowCodeFolding = (bShowCodeFolding) ? FALSE : TRUE;
-      SciCall_SetMarginWidth(MARGIN_FOLD_INDEX, (bShowCodeFolding) ? 11 : 0);
-      UpdateToolbar();
-      if (!bShowCodeFolding)
-        FoldToggleAll(EXPAND);
-      break;
-
-
-    case IDM_VIEW_TOGGLEFOLDS:
-      FoldToggleAll(SNIFF);
-      break;
-
-
     case IDM_VIEW_SHOWWHITESPACE:
       bViewWhiteSpace = (bViewWhiteSpace) ? FALSE : TRUE;
       SendMessage(hwndEdit,SCI_SETVIEWWS,(bViewWhiteSpace)?SCWS_VISIBLEALWAYS:SCWS_INVISIBLE,0);
@@ -3923,11 +3678,11 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
           }
           else {
             dwLastIOError = GetLastError();
-            MsgBox(MBWARN,IDS_WRITEINI_FAIL);
+            MsgBox(MBINFO,IDS_WRITEINI_FAIL);
           }
         }
         else
-          MsgBox(MBWARN,IDS_CREATEINI_FAIL);
+          MsgBox(MBINFO,IDS_CREATEINI_FAIL);
       }
       break;
 
@@ -4583,14 +4338,6 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
         MessageBeep(0);
       break;
 
-
-    case IDT_VIEW_TOGGLEFOLDS:
-      if (IsCmdEnabled(hwnd,IDM_VIEW_TOGGLEFOLDS))
-        SendMessage(hwnd,WM_COMMAND,MAKELONG(IDM_VIEW_TOGGLEFOLDS,1),0);
-      else
-        MessageBeep(0);
-      break;
-
   }
 
   return(0);
@@ -4813,16 +4560,6 @@ LRESULT MsgNotify(HWND hwnd,WPARAM wParam,LPARAM lParam)
           SetWindowTitle(hwnd,uidsAppTitle,fIsElevated,IDS_UNTITLED,szCurFile,
             iPathNameFormat,bModified || iEncoding != iOriginalEncoding,
             IDS_READONLY,bReadOnly,szTitleExcerpt);
-          break;
-
-        case SCN_MARGINCLICK:
-          if (scn->margin == MARGIN_FOLD_INDEX)
-            FoldClick(SciCall_LineFromPosition(scn->position), scn->modifiers);
-          break;
-
-        case SCN_KEY:
-          // Also see the corresponding patch in scintilla\src\Editor.cxx
-          FoldAltArrow(scn->ch, scn->modifiers);
           break;
 
         case SCN_SAVEPOINTLEFT:
@@ -5078,9 +4815,6 @@ void LoadSettings()
   bShowLineNumbers = IniSectionGetInt(pIniSection,L"ShowLineNumbers",1);
   if (bShowLineNumbers) bShowLineNumbers = 1;
 
-  bShowCodeFolding = IniSectionGetInt(pIniSection,L"ShowCodeFolding",1);
-  if (bShowCodeFolding) bShowCodeFolding = 1;
-
   bViewWhiteSpace = IniSectionGetInt(pIniSection,L"ViewWhiteSpace",0);
   if (bViewWhiteSpace) bViewWhiteSpace = 1;
 
@@ -5096,9 +4830,6 @@ void LoadSettings()
 
   bLoadASCIIasUTF8 = IniSectionGetInt(pIniSection,L"LoadASCIIasUTF8",0);
   if (bLoadASCIIasUTF8) bLoadASCIIasUTF8 = 1;
-
-  bLoadNFOasOEM = IniSectionGetInt(pIniSection,L"LoadNFOasOEM",1);
-  if (bLoadNFOasOEM) bLoadNFOasOEM = 1;
 
   bNoEncodingTags = IniSectionGetInt(pIniSection,L"NoEncodingTags",0);
   if (bNoEncodingTags) bNoEncodingTags = 1;
@@ -5329,13 +5060,11 @@ void SaveSettings(BOOL bSaveSettingsNow)
   IniSectionSetInt(pIniSection,L"LongLineMode",iLongLineMode);
   IniSectionSetInt(pIniSection,L"ShowSelectionMargin",bShowSelectionMargin);
   IniSectionSetInt(pIniSection,L"ShowLineNumbers",bShowLineNumbers);
-  IniSectionSetInt(pIniSection,L"ShowCodeFolding",bShowCodeFolding);
   IniSectionSetInt(pIniSection,L"ViewWhiteSpace",bViewWhiteSpace);
   IniSectionSetInt(pIniSection,L"ViewEOLs",bViewEOLs);
   IniSectionSetInt(pIniSection,L"DefaultEncoding",Encoding_MapIniSetting(FALSE,iDefaultEncoding));
   IniSectionSetInt(pIniSection,L"SkipUnicodeDetection",bSkipUnicodeDetection);
   IniSectionSetInt(pIniSection,L"LoadASCIIasUTF8",bLoadASCIIasUTF8);
-  IniSectionSetInt(pIniSection,L"LoadNFOasOEM",bLoadNFOasOEM);
   IniSectionSetInt(pIniSection,L"NoEncodingTags",bNoEncodingTags);
   IniSectionSetInt(pIniSection,L"DefaultEOLMode",iDefaultEOLMode);
   IniSectionSetInt(pIniSection,L"FixLineEndings",bFixLineEndings);
@@ -5799,7 +5528,7 @@ void LoadFlags()
   if (IniSectionGetInt(pIniSection,L"NoFileVariables",0))
     fNoFileVariables = 1;
 
-  IniSectionGetString(pIniSection,L"ShellAppUserModelID",L"Notepad2",
+  IniSectionGetString(pIniSection,L"ShellAppUserModelID",L"(default)",
     g_wchAppUserModelID,COUNTOF(g_wchAppUserModelID));
 
   if (IniSectionGetInt(pIniSection,L"ShellUseSystemMRU",0))
@@ -6032,8 +5761,6 @@ void UpdateToolbar()
   //EnableTool(IDT_EDIT_FINDPREV,i && lstrlen(efrData.szFind));
   EnableTool(IDT_EDIT_REPLACE,i /*&& !bReadOnly*/);
   EnableTool(IDT_EDIT_CLEAR,i /*&& !bReadOnly*/);
-
-  EnableTool(IDT_VIEW_TOGGLEFOLDS,bShowCodeFolding);
 
   CheckTool(IDT_VIEW_WORDWRAP,fWordWrap);
 

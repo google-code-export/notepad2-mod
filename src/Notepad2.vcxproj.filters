@@ -171,27 +171,6 @@
     <ClCompile Include="..\scintilla\win32\ScintillaWin.cxx">
       <Filter>Scintilla\win32</Filter>
     </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexAU3.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexBash.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexTCL.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexInno.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexNsis.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexLua.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
-    <ClCompile Include="..\scintilla\src\LexRuby.cxx">
-      <Filter>Scintilla\src</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dialogs.h">
@@ -207,9 +186,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Notepad2.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SciCall.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Styles.h">

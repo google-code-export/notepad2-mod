@@ -17,9 +17,7 @@
 *
 *
 ******************************************************************************/
-#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x501
-#endif
 #include <windows.h>
 #include <commctrl.h>
 #include <shlobj.h>
@@ -34,7 +32,6 @@
 #include "dlapi.h"
 #include "dialogs.h"
 #include "resource.h"
-#include "Version.h"
 
 
 extern HWND  hwndMain;
@@ -44,7 +41,6 @@ extern LPMALLOC  g_lpMalloc;
 extern DWORD dwLastIOError;
 extern BOOL bSkipUnicodeDetection;
 extern BOOL bLoadASCIIasUTF8;
-extern BOOL bLoadNFOasOEM;
 extern int fNoFileVariables;
 extern BOOL bNoEncodingTags;
 extern BOOL bFixLineEndings;
@@ -94,7 +90,7 @@ int MsgBox(int iType,UINT uIdMsg,...)
   GetString(IDS_APPTITLE,szTitle,COUNTOF(szTitle));
 
   switch (iType) {
-    case MBINFO: iIcon = MB_ICONINFORMATION; break;
+    case MBINFO: iIcon = MB_ICONEXCLAMATION; break;
     case MBWARN: iIcon = MB_ICONEXCLAMATION; break;
     case MBYESNO: iIcon = MB_ICONEXCLAMATION | MB_YESNO; break;
     case MBYESNOCANCEL: iIcon = MB_ICONEXCLAMATION | MB_YESNOCANCEL; break;
@@ -213,10 +209,10 @@ BOOL GetDirectory(HWND hwndParent,int iTitle,LPWSTR pszFolder,LPCWSTR pszBase,BO
 //
 //  AboutDlgProc()
 //
-static const DWORD  dwVerMajor    = VERSION_MAJOR;
-static const DWORD  dwVerMinor    = VERSION_MINOR;
-static const DWORD  dwBuildNumber = VERSION_BUILD;
-static const DWORD  dwVerRev      = VERSION_REV;
+static const DWORD  dwVerMajor    = 4;
+static const DWORD  dwVerMinor    = 1;
+static const DWORD  dwBuildNumber = 24;
+static const WCHAR* szRevision    = L"";
 static const WCHAR* szExtra       = L"";
 static const BOOL   bReleaseBuild = TRUE;
 
@@ -236,22 +232,14 @@ BOOL CALLBACK AboutDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
         LOGFONT lf;
 
         if (bReleaseBuild) {
-#if defined(_WIN64)
-          wsprintf(szVersion,L"Notepad2 x64 %u.%u.%0.2u (modified rev. %u)%s",
-#else
-          wsprintf(szVersion,L"Notepad2 %u.%u.%0.2u (modified rev. %u)%s",
-#endif
-            dwVerMajor,dwVerMinor,dwBuildNumber,dwVerRev,szExtra);
+          wsprintf(szVersion,L"Notepad2 %u.%u.%0.2u%s",
+            dwVerMajor,dwVerMinor,dwBuildNumber,szRevision);
           SetDlgItemText(hwnd,IDC_VERSION,szVersion);
         }
         else {
           MultiByteToWideChar(CP_ACP,0,__DATE__,-1,szDate,COUNTOF(szDate));
-#if defined(_WIN64)
-          wsprintf(szVersion,L"Notepad2 x64 %u.%u.%0.2u%u%s %s",
-#else
-          wsprintf(szVersion,L"Notepad2 %u.%u.%0.2u%u%s %s",
-#endif
-            dwVerMajor,dwVerMinor,dwBuildNumber,dwVerRev,szExtra,szDate);
+          wsprintf(szVersion,L"Notepad2 %u.%u.%0.2u%s%s %s",
+            dwVerMajor,dwVerMinor,dwBuildNumber,szRevision,szExtra,szDate);
           SetDlgItemText(hwnd,IDC_VERSION,szVersion);
         }
 
@@ -1910,9 +1898,6 @@ BOOL CALLBACK SelectDefEncodingDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM 
         if (bLoadASCIIasUTF8)
           CheckDlgButton(hwnd,IDC_ASCIIASUTF8,BST_CHECKED);
 
-        if (bLoadNFOasOEM)
-          CheckDlgButton(hwnd,IDC_NFOASOEM,BST_CHECKED);
-
         if (bNoEncodingTags)
           CheckDlgButton(hwnd,IDC_ENCODINGFROMFILEVARS,BST_CHECKED);
 
@@ -1928,7 +1913,6 @@ BOOL CALLBACK SelectDefEncodingDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM 
             if (Encoding_GetFromComboboxEx(GetDlgItem(hwnd,IDC_ENCODINGLIST),&pdd->idEncoding)) {
               bSkipUnicodeDetection = (IsDlgButtonChecked(hwnd,IDC_NOUNICODEDETECTION) == BST_CHECKED) ? 1 : 0;
               bLoadASCIIasUTF8 = (IsDlgButtonChecked(hwnd,IDC_ASCIIASUTF8) == BST_CHECKED) ? 1 : 0;
-              bLoadNFOasOEM = (IsDlgButtonChecked(hwnd,IDC_NFOASOEM) == BST_CHECKED) ? 1 : 0;
               bNoEncodingTags = (IsDlgButtonChecked(hwnd,IDC_ENCODINGFROMFILEVARS) == BST_CHECKED) ? 1 : 0;
               EndDialog(hwnd,IDOK);
             }

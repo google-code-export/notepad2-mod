@@ -17,9 +17,7 @@
 *
 *
 ******************************************************************************/
-#if !defined(_WIN32_WINNT)
 #define _WIN32_WINNT 0x501
-#endif
 #include <windows.h>
 #include <commctrl.h>
 #include <commdlg.h>
@@ -33,10 +31,7 @@
 #include "scilexer.h"
 #include "edit.h"
 #include "styles.h"
-#include "SciCall.h"
 #include "resource.h"
-
-extern int iEncoding;
 
 
 #define MULTI_STYLE(a,b,c,d) ((a)|(b<<8)|(c<<16)|(d<<24))
@@ -46,8 +41,8 @@ KEYWORDLIST KeyWords_NULL = {
 "", "", "", "", "", "", "", "", "" };
 
 
-EDITLEXER lexDefault = { SCLEX_NULL, 63000, L"Default Text", L"txt; text; wtx; log; asc; doc", L"", &KeyWords_NULL, {
-                /*  0 */ { STYLE_DEFAULT, 63100, L"Default Style", L"font:Default; size:10", L"" },
+EDITLEXER lexDefault = { SCLEX_NULL, 63000, L"Default Text", L"txt; text; wtx; log; asc; doc; diz; nfo", L"", &KeyWords_NULL, {
+                /*  0 */ { STYLE_DEFAULT, 63100, L"Default Style", L"font:Lucida Console; size:10", L"" },
                 /*  1 */ { STYLE_LINENUMBER, 63101, L"Margins and Line Numbers", L"size:-2; fore:#FF0000", L"" },
                 /*  2 */ { STYLE_BRACELIGHT, 63102, L"Matching Braces", L"size:+1; bold; fore:#FF0000", L"" },
                 /*  3 */ { STYLE_BRACEBAD, 63103, L"Matching Braces Error", L"size:+1; bold; fore:#000080", L"" },
@@ -715,31 +710,6 @@ EDITLEXER lexPL = { SCLEX_PERL, 63014, L"Perl Script", L"pl; pm; cgi; pod", L"",
                     { -1, 00000, L"", L"", L"" } } };
 
 
-KEYWORDLIST KeyWords_RUBY = {
-"__FILE__ __LINE__ alias and begin break case class def defined? do else elsif end ensure "
-"false for in if module next nil not or redo rescue retry return self super then true "
-"undef unless until when while yield",
-"", "", "", "", "", "", "", "" };
-
-EDITLEXER lexRUBY = { SCLEX_RUBY, 63304, L"Ruby", L"rb;ruby", L"", &KeyWords_RUBY, {
-                    { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                    //{ SCE_P_DEFAULT, L"Default", L"", L"" },
-                    { SCE_P_COMMENTLINE, 63127, L"Comment", L"fore:#007F00", L"" },
-                    { SCE_P_COMMENTBLOCK, 63305, L"Comment Block", L"fore:#007F00", L"" },
-                    { SCE_P_WORD, 63128, L"Keyword", L"fore:#00007F;bold", L"" },
-                    { SCE_P_IDENTIFIER, 63129, L"Identifier", L"", L"" },
-                    { SCE_P_NUMBER, 63130, L"Number", L"fore:#007F7F", L"" },
-                    { SCE_P_OPERATOR, 63132, L"Operator", L"bold", L"" },
-                    { SCE_P_STRING, 63211, L"String double quoted", L"fore:#FF8000", L"" },
-                    { SCE_P_CHARACTER, 63212, L"String single quoted", L"fore:#FF8000", L"" },
-                    { SCE_P_STRINGEOL, 63303, L"String not closed", L"fore:#FF8000", L"" },
-                    { SCE_P_TRIPLEDOUBLE, 63244, L"String triple double quotes", L"fore:#FF8000", L"" },
-                    { SCE_P_TRIPLE, 63245, L"String triple single quotes", L"fore:#FF8000", L"" },
-                    { SCE_P_CLASSNAME, 63246, L"Class name", L"fore:#0000FF;bold", L"" },
-                    { SCE_P_DEFNAME, 63247, L"Function name", L"fore:#007F7F;bold", L"" },
-                    { -1, 00000, L"", L"", L"" } } };
-
-
 KEYWORDLIST KeyWords_INI = {
 "", "", "", "", "", "", "", "", "" };
 
@@ -748,21 +718,17 @@ EDITLEXER lexINI = { SCLEX_PROPERTIES, 63015, L"Configuration Files", L"ini; inf
                      { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
                      //{ SCE_PROPS_DEFAULT, L"Default", L"", L"" },
                      { SCE_PROPS_COMMENT, 63127, L"Comment", L"fore:#008000", L"" },
-                     { SCE_PROPS_SECTION, 63232, L"Section", L"fore:#000000; back:#FF8040; bold; eolfilled", L"" },
+                     { SCE_PROPS_SECTION, 63232, L"Section", L"bold; fore:#000000; back:#FFD24D; eolfilled", L"" },
                      { SCE_PROPS_ASSIGNMENT, 63233, L"Assignment", L"fore:#FF0000", L"" },
                      { SCE_PROPS_DEFVAL, 63234, L"Default Value", L"fore:#FF0000", L"" },
                      { -1, 00000, L"", L"", L"" } } };
 
 
 KEYWORDLIST KeyWords_BAT = {
-"assoc attrib bcdedit break cacls call cd chcp chdir chkdsk chkntfs choice cls cmd color "
-"com comp compact con convert copy country ctty date defined del dir diskcomp diskcopy "
-"diskpart do doskey driverquery echo echo. else endlocal equ erase errorlevel exist exit "
-"fc find findstr for format fsutil ftype geq goto gpresult graftabl gtr help icacls if in "
-"label leq loadfix loadhigh lpt lss md mkdir mklink mode more move neq not nul openfiles "
-"path pause popd print prompt pushd rd recover rem ren rename replace rmdir robocopy sc "
-"schtasks set setlocal shift shutdown sort start subst systeminfo taskkill tasklist time "
-"title tree type ver verify vol wmic xcopy",
+"rem set if exist errorlevel for in do break call chcp cd chdir choice cls "
+"country ctty date del erase dir echo exit goto loadfix loadhigh mkdir md "
+"move path pause prompt rename ren rmdir rd shift time type ver verify vol "
+"com con lpt nul echo.",
 "", "", "", "", "", "", "", "" };
 
 
@@ -789,9 +755,9 @@ EDITLEXER lexDIFF = { SCLEX_DIFF, 63017, L"Diff Files", L"diff; patch", L"", &Ke
                       { SCE_DIFF_COMMAND, 63236, L"Command", L"bold; fore:#0A246A", L"" },
                       { SCE_DIFF_HEADER, 63238, L"Source and Destination", L"fore:#C80000; back:#FFF1A8; eolfilled", L"" },
                       { SCE_DIFF_POSITION, 63239, L"Position Setting", L"fore:#0000FF", L"" },
-                      { SCE_DIFF_ADDED, 63240, L"Line Addition", L"fore:#002000; back:#80FF80; eolfilled", L"" },
-                      { SCE_DIFF_DELETED, 63241, L"Line Removal", L"fore:#200000; back:#FF8080; eolfilled", L"" },
-                      { SCE_DIFF_CHANGED, 63242, L"Line Change", L"fore:#000020; back:#8080FF; eolfilled", L"" },
+                      { SCE_DIFF_ADDED, 63240, L"Line Addition", L"fore:#000000; back:#C0FF60; eolfilled", L"" },
+                      { SCE_DIFF_DELETED, 63241, L"Line Removal", L"fore:#000000; back:#FF8060; eolfilled", L"" },
+                      { SCE_DIFF_CHANGED, 63242, L"Line Change", L"fore:#000000; back:#99D7FF; eolfilled", L"" },
                       { -1, 00000, L"", L"", L"" } } };
 
 
@@ -832,140 +798,6 @@ EDITLEXER lexSQL = { SCLEX_SQL, 63018, L"SQL Query", L"sql", L"", &KeyWords_SQL,
                      { SCE_SQL_NUMBER, 63130, L"Number", L"fore:#FF0000", L"" },
                      { SCE_SQL_OPERATOR, 63132, L"Operator", L"bold; fore:#800080", L"" },
                      { -1, 00000, L"", L"", L"" } } };
-
-
-KEYWORDLIST KeyWords_NSIS = {
-"!addincludedir !addplugindir !appendfile !cd !define !delfile !echo !else !endif !error "
-"!execute !if !ifdef !ifmacrodef !ifmacrondef !ifndef !include !insertmacro !macro "
-"!macroend !packhdr !system !tempfile !undef !verbose !warning "
-".onguiend .onguiinit .oninit .oninstfailed .oninstsuccess .onmouseoversection "
-".onrebootfailed .onselchange .onuserabort .onverifyinstdir "
-"un.onguiend un.onguiinit un.oninit un.onrebootfailed un.onuninstfailed "
-"un.onuninstsuccess un.onuserabort "
-"abort addbrandingimage addsize allowrootdirinstall allowskipfiles autoclosewindow "
-"bannertrimpath bgfont bggradient brandingtext bringtofront call callinstdll "
-"caption changeui checkbitmap clearerrors completedtext componenttext copyfiles "
-"crccheck createdirectory createfont createshortcut delete deleteinisec deleteinistr "
-"deleteregkey deleteregvalue detailprint detailsbuttontext dirstate dirtext dirvar "
-"dirverify enablewindow enumregkey enumregvalue exch exec execshell execwait "
-"expandenvstrings file filebufsize fileclose fileerrortext fileopen fileread filereadbyte "
-"fileseek filewrite filewritebyte findclose findfirst findnext findwindow flushini "
-"getcurinsttype getcurrentaddress getdlgitem getdllversion getdllversionlocal geterrorlevel "
-"getfiletime getfiletimelocal getfullpathname getfunctionaddress getinstdirerror "
-"getlabeladdress gettempfilename goto hidewindow icon ifabort iferrors iffileexists "
-"ifrebootflag ifsilent initpluginsdir installbuttontext installcolors installdir "
-"installdirregkey instprogressflags insttypegettext insttypesettext intcmp intcmpu intfmt "
-"intop iswindow langstring licensebkcolor licensedata licenseforceselection licenselangstring "
-"licensetext loadlanguagefile lockwindow logset logtext messagebox miscbuttontext name nop "
-"outfile page pop push quit readenvstr readinistr readregdword readregstr reboot regdll "
-"rename requestexecutionlevel reservefile return rmdir searchpath sectiongetflags "
-"sectiongetinsttypes sectiongetsize sectiongettext sectionin sectionsetflags sectionsetinsttypes "
-"sectionsetsize sectionsettext sendmessage setautoclose setbrandingimage setcompress setcompressor "
-"setcompressordictsize setctlcolors setcurinsttype setdatablockoptimize setdatesave setdetailsprint "
-"setdetailsview seterrorlevel seterrors setfileattributes setfont setoutpath setoverwrite "
-"setpluginunload setrebootflag setregview setshellvarcontext setsilent showinstdetails "
-"showuninstdetails showwindow silentinstall silentuninstall sleep spacetexts strcmp strcmps "
-"strcpy strlen subcaption uninstallbuttontext uninstallcaption uninstallicon uninstallsubcaption "
-"uninstalltext uninstpage unregdll var viaddversionkey viproductversion windowicon writeinistr "
-"writeregbin writeregdword writeregexpandstr writeregstr writeuninstaller xpstyle",
-"${nsisdir} $0 $1 $2 $3 $4 $5 $6 $7 $8 $9 $r0 $r1 $r2 $r3 $r4 $r5 $r6 $r7 $r8 $r9 "
-"$instdir $outdir $cmdline $language "
-"$programfiles $programfiles32 $programfiles64 $commonfiles $commonfiles32 $commonfiles64 "
-"$desktop $exedir $exefile $exepath $windir $sysdir $temp $startmenu $smprograms $smstartup "
-"$quicklaunch $documents $sendto $recent $favorites $music $pictures $videos $nethood $fonts "
-"$templates $appdata $localappdata $printhood $internet_cache $cookies $history $profile "
-"$admintools $resources $resources_localized $cdburn_area $hwndparent $pluginsdir "
-"${__date__} ${__file__} ${__function__} ${__global__} ${__line__} ${__pageex__} ${__section__} "
-"${__time__} ${__timestamp__} ${__uninstall__}",
-"oname rebootok nonfatal ifempty nounload silent filesonly short "
-"mb_ok mb_okcancel mb_abortretryignore mb_retrycancel mb_yesno mb_yesnocancel mb_iconexclamation "
-"mb_iconinformation mb_iconquestion mb_iconstop mb_usericon mb_topmost mb_setforeground mb_right "
-"mb_rtlreading mb_defbutton1 mb_defbutton2 mb_defbutton3 mb_defbutton4 idabort idcancel idignore "
-"idno idok idretry idyes sd "
-"current all timeout imgid resizetofit listonly textonly both branding "
-"hkcr hkey_classes_root hklm hkey_local_machine hkcu hkey_current_user hku  hkey_users "
-"hkcc hkey_current_config hkdd hkey_dyn_data hkpd hkey_performance_data shctx shell_context silent"
-"left right top bottom true false on off italic underline strike trimleft trimright trimcenter "
-"idd_license idd_dir idd_selcom idd_inst idd_instfiles idd_uninst idd_verify force windows nocustom "
-"customstring componentsonlyoncustom gray none user highest admin lang hide show nevershow normal "
-"silent silentlog auto solid final zlib bzip2 lzma try ifnewer ifdiff lastused manual alwaysoff "
-"normal file_attribute_normal archive file_attribute_archive hidden file_attribute_hidden "
-"offline file_attribute_offline readonly file_attribute_readonly system file_attribute_system "
-"temporary file_attribute_temporary custom license components directory instfiles uninstconfirm 32 64 "
-"enablecancel",
-"", "", "", "", "", "" };
-
-
-EDITLEXER lexNSIS = { SCLEX_NSIS, 63284, L"NSIS Script", L"nsi; nsh", L"", &KeyWords_NSIS, {
-                      { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                    //{ SCE_NSIS_DEFAULT, L"Default", L"", L"" },
-                      { MULTI_STYLE(SCE_NSIS_COMMENT,SCE_NSIS_COMMENTBOX,0,0), 63127, L"Comment", L"fore:#008000", L"" },
-                      { MULTI_STYLE(SCE_NSIS_STRINGDQ,SCE_NSIS_STRINGLQ,SCE_NSIS_STRINGRQ,0), 63131, L"String", L"fore:#666666; back:#EEEEEE", L"" },
-                      { SCE_NSIS_FUNCTION, 63277, L"Function", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_VARIABLE, 63249, L"Variable", L"fore:#CC3300", L"" },
-                      { SCE_NSIS_STRINGVAR, 63285, L"Variable within String", L"fore:#CC3300; back:#EEEEEE", L"" },
-                      { SCE_NSIS_NUMBER, 63130, L"Number", L"fore:#FF0000", L"" },
-                      { SCE_NSIS_LABEL, 63286, L"Constant", L"fore:#FF9900", L"" },
-                    //{ SCE_NSIS_USERDEFINED, L"User Defined", L"", L"" },
-                      { SCE_NSIS_SECTIONDEF, 63232, L"Section", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_SUBSECTIONDEF, 63287, L"Sub Section", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_SECTIONGROUP, 63288, L"Section Group", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_FUNCTIONDEF, 63289, L"Function Definition", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_PAGEEX, 63290, L"PageEx", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_IFDEFINEDEF, 63291, L"If Definition", L"fore:#0033CC", L"" },
-                      { SCE_NSIS_MACRODEF, 63292, L"Macro Definition", L"fore:#0033CC", L"" },
-                      { -1, 00000, L"", L"", L"" } } };
-
-
-KEYWORDLIST KeyWords_INNO = {
-"code components custommessages dirs files icons ini installdelete langoptions "
-"languages messages registry run setup types tasks uninstalldelete "
-"uninstallrun _istool",
-"allowcancelduringinstall allownoicons allowrootdirectory allowuncpath alwaysrestart alwaysshowcomponentslist "
-"alwaysshowdironreadypage alwaysshowgrouponreadypage alwaysusepersonalgroup appcomments appcontact appcopyright "
-"appenddefaultdirname appenddefaultgroupname appid appmodifypath appmutex appname apppublisher apppublisherurl "
-"appreadmefile appsupporturl appupdatesurl appvername appversion architecturesallowed "
-"architecturesinstallin64bitmode backcolor backcolor2 backcolordirection backsolid changesassociations "
-"changesenvironment compression copyrightfontname copyrightfontsize createappdir createuninstallregkey "
-"defaultdirname defaultgroupname defaultuserinfoname defaultuserinfoorg defaultuserinfoserial dialogfontname "
-"dialogfontsize direxistswarning disabledirpage disablefinishedpage disableprogramgrouppage disablereadymemo "
-"disablereadypage disablestartupprompt diskclustersize diskslicesize diskspanning enabledirdoesntexistwarning "
-"encryption extradiskspacerequired flatcomponentslist infoafterfile infobeforefile internalcompresslevel "
-"languagedetectionmethod languagecodepage languageid languagename licensefile mergeduplicatefiles minversion "
-"onlybelowversion outputbasefilename outputdir outputmanifestfile password privilegesrequired reservebytes "
-"restartifneededbyrun setupiconfile showcomponentsizes showlanguagedialog showtaskstreelines slicesperdisk "
-"solidcompression sourcedir timestamprounding timestampsinutc titlefontname titlefontsize touchdate touchtime "
-"uninstallable uninstalldisplayicon uninstalldisplayname uninstallfilesdir uninstalllogmode uninstallrestartcomputer "
-"updateuninstalllogappname usepreviousappdir usepreviousgroup useprevioussetuptype useprevioustasks versioninfoproductname "
-"useprevioususerinfo userinfopage usesetupldr versioninfocompany versioninfocopyright versioninfodescription versioninfoproductversion "
-"versioninfotextversion versioninfoversion versioninfoproducttextversion welcomefontname welcomefontsize windowshowcaption "
-"windowstartmaximized windowresizable windowvisible wizardimagebackcolor wizardimagefile wizardimagestretch wizardsmallimagefile",
-"afterinstall attribs beforeinstall check comment components copymode description destdir destname excludes "
-"extradiskspacerequired filename flags fontinstall groupdescription hotkey infoafterfile infobeforefile iconfilename "
-"iconindex key languages licensefile messagesfile minversion name onlybelowversion parameters permissions root "
-"runonceid section source statusmsg string subkey tasks terminalservicesaware type types valuedata valuename valuetype workingdir",
-"append define dim else emit endif endsub error expr file for if ifdef "
-"ifexist ifndef ifnexist include insert pragma sub undef",
-"begin break case const continue do downto else end except finally for "
-"function if of procedure repeat then to try until uses var while with",
-"", "", "", "" };
-
-
-EDITLEXER lexINNO = { SCLEX_INNOSETUP, 63293, L"Inno Setup Script", L"iss", L"", &KeyWords_INNO, {
-                      { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                    //{ SCE_INNO_DEFAULT, L"Default", L"", L"" },
-                      { SCE_INNO_COMMENT, 63127, L"Comment", L"fore:#008000", L"" },
-                      { SCE_INNO_KEYWORD, 63128, L"Keyword", L"fore:#0000FF", L"" },
-                      { SCE_INNO_PARAMETER, 63294, L"Parameter", L"fore:#0000FF", L"" },
-                      { SCE_INNO_SECTION, 63232, L"Section", L"fore:#000080; bold", L"" },
-                      { SCE_INNO_PREPROC, 63133, L"Preprocessor", L"fore:#CC0000", L"" },
-                      { SCE_INNO_INLINE_EXPANSION, 63295, L"Inline Expansion", L"fore:#800080", L"" },
-                      { SCE_INNO_COMMENT_PASCAL, 63296, L"Pascal Comment", L"fore:#008000", L"" },
-                      { SCE_INNO_KEYWORD_PASCAL, 63297, L"Pascal Keyword", L"fore:#0000FF", L"" },
-                    //{ SCE_INNO_KEYWORD_USER, L"User Defined", L"", L"" },
-                      { MULTI_STYLE(SCE_INNO_STRING_DOUBLE,SCE_INNO_STRING_SINGLE,0,0), 63131, L"String", L"fore:#008080", L"" },
-                    //{ SCE_INNO_IDENTIFIER, L"Identifier", L"", L"" },
-                      { -1, 00000, L"", L"", L"" } } };
 
 
 KEYWORDLIST KeyWords_PY = {
@@ -1124,300 +956,31 @@ EDITLEXER lexPS = { SCLEX_POWERSHELL, 63021, L"PowerShell Script", L"ps1; psc1",
                     { -1, 00000, L"", L"", L"" } } };
 
 
-KEYWORDLIST KeyWords_LUA = {
-"and break do else elseif "
-"end false for function if "
-"in local nil not or "
-"repeat return then true until while",
-"", "", "", "", "", "", "", "" };
-
-
-EDITLEXER lexLUA = { SCLEX_LUA, 63298, L"Lua Script", L"lua", L"", &KeyWords_LUA, {
-                    { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                    //{ SCE_LUA_DEFAULT, L"Default", L"", L"" },
-                    { SCE_LUA_COMMENT, 63127, L"Comment", L"fore:#007F00", L"" },
-                    { SCE_LUA_COMMENTLINE, 63299, L"Comment Line", L"fore:#007F00", L"" },
-                    { SCE_LUA_COMMENTDOC, 63300, L"Comment Doc", L"fore:#007F00", L"" },
-                    { SCE_LUA_NUMBER, 63130, L"Number", L"fore:#007F7F", L"" },
-                    { SCE_LUA_WORD, 63128, L"Keyword", L"fore:#00007F;bold", L"" },
-                    { SCE_LUA_STRING, 63131, L"String", L"fore:#FF0000", L"" },
-                    { SCE_LUA_CHARACTER, 63301, L"Character", L"", L"" },
-                    { SCE_LUA_LITERALSTRING, 63302, L"Literal String", L"fore:#FF0000", L"" },
-                    { SCE_LUA_PREPROCESSOR, 63133, L"Preprocessor", L"", L"" },
-                    { SCE_LUA_OPERATOR, 63132, L"Operator", L"", L"" },
-                    { SCE_LUA_IDENTIFIER, 63129, L"Identifier", L"", L"" },
-                    { SCE_LUA_STRINGEOL, 63303, L"String not closed", L"fore:#FF0000", L"" },
-                    { -1, 00000, L"", L"", L"" } } };
-
-
-KEYWORDLIST KeyWords_BASH = {
-"alias ar asa awk banner basename bash bc bdiff break "
-"bunzip2 bzip2 cal calendar case cat cc cd chmod cksum "
-"clear cmp col comm compress continue cp cpio crypt "
-"csplit ctags cut date dc dd declare deroff dev df diff diff3 "
-"dircmp dirname do done du echo ed egrep elif else env "
-"esac eval ex exec exit expand export expr false fc "
-"fgrep fi file find fmt fold for function functions "
-"getconf getopt getopts grep gres hash head help "
-"history iconv id if in integer jobs join kill local lc "
-"let line ln logname look ls m4 mail mailx make "
-"man mkdir more mt mv newgrp nl nm nohup ntps od "
-"pack paste patch pathchk pax pcat perl pg pr print "
-"printf ps pwd read readonly red return rev rm rmdir "
-"sed select set sh shift size sleep sort spell "
-"split start stop strings strip stty sum suspend "
-"sync tail tar tee test then time times touch tr "
-"trap true tsort tty type typeset ulimit umask unalias "
-"uname uncompress unexpand uniq unpack unset until "
-"uudecode uuencode vi vim vpax wait wc whence which "
-"while who wpaste wstart xargs zcat chgrp chown chroot dir dircolors "
-"factor groups hostid install link md5sum mkfifo "
-"mknod nice pinky printenv ptx readlink seq "
-"sha1sum shred stat su tac unlink users vdir whoami yes",
-"", "", "", "", "", "", "", "" };
-
-
-EDITLEXER lexBASH = { SCLEX_BASH, 63259, L"Shell Script", L"sh", L"", &KeyWords_BASH, {
-                      { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                      { SCE_SH_ERROR, 63260, L"Error", L"", L"" },
-                      { SCE_SH_COMMENTLINE, 63127, L"Comment", L"fore:#008000", L"" },
-                      { SCE_SH_NUMBER, 63130, L"Number", L"", L"" },
-                      { SCE_SH_WORD, 63128, L"Keyword", L"fore:#FF8000; bold", L"" },
-                      { SCE_SH_STRING, 63211, L"String double quoted", L"fore:#008000", L"" },
-                      { SCE_SH_CHARACTER, 63212, L"String single quoted", L"fore:#008000", L"" },
-                      { SCE_SH_OPERATOR, 63132, L"Operator", L"", L"" },
-                      { SCE_SH_IDENTIFIER, 63129, L"Identifier", L"", L"" },
-                      { SCE_SH_SCALAR, 63268, L"Scalar", L"", L"" },
-                      { SCE_SH_PARAM, 63269, L"Parameter expansion", L"", L"" },
-                      { SCE_SH_BACKTICKS, 63270, L"Back Ticks", L"", L"" },
-                      { SCE_SH_HERE_DELIM, 63271, L"Here-doc (Delimiter)", L"", L"" },
-                      { SCE_SH_HERE_Q, 63272, L"Here-doc (Single quoted, q)", L"", L"" },
-                      { -1, 00000, L"", L"", L"" } } };
-
-
-KEYWORDLIST KeyWords_TCL = {
-// TCL Keywords
-"after append array auto_execok "
-"auto_import auto_load auto_load_index auto_qualify "
-"beep bgerror binary break case catch cd clock "
-"close concat continue dde default echo else elseif "
-"encoding eof error eval exec exit expr fblocked "
-"fconfigure fcopy file fileevent flush for foreach format "
-"gets glob global history http if incr info "
-"interp join lappend lindex linsert list llength load "
-"loadTk lrange lreplace lsearch lset lsort memory msgcat "
-"namespace open package pid pkg::create pkg_mkIndex Platform-specific proc "
-"puts pwd re_syntax read regexp registry regsub rename "
-"resource return scan seek set socket source split "
-"string subst switch tclLog tclMacPkgSearch tclPkgSetup tclPkgUnknown tell "
-"time trace unknown unset update uplevel upvar variable "
-"vwait while",
-// TK Keywords
-"bell bind bindtags bitmap button canvas checkbutton clipboard "
-"colors console cursors destroy entry event focus font "
-"frame grab grid image Inter-client keysyms label labelframe "
-"listbox lower menu menubutton message option options pack "
-"panedwindow photo place radiobutton raise scale scrollbar selection "
-"send spinbox text tk tk_chooseColor tk_chooseDirectory tk_dialog tk_focusNext "
-"tk_getOpenFile tk_messageBox tk_optionMenu tk_popup tk_setPalette tkerror tkvars tkwait "
-"toplevel winfo wish wm",
-// iTCL Keywords
-"@scope body class code common component configbody "
-"constructor define destructor hull import inherit itcl itk itk_component "
-"itk_initialize itk_interior itk_option iwidgets keep method "
-"private protected public",
-"", "", "", "", "", "" };
-
-
-#define SCE_TCL__MULTI_COMMENT      MULTI_STYLE(SCE_TCL_COMMENT,SCE_TCL_COMMENTLINE,SCE_TCL_COMMENT_BOX,SCE_TCL_BLOCK_COMMENT)
-#define SCE_TCL__MULTI_KEYWORD      MULTI_STYLE(SCE_TCL_WORD,SCE_TCL_WORD2,SCE_TCL_WORD3,SCE_TCL_WORD_IN_QUOTE)
-#define SCE_TCL__MULTI_SUBSTITUTION MULTI_STYLE(SCE_TCL_SUBSTITUTION,SCE_TCL_SUB_BRACE,0,0)
-
-
-EDITLEXER lexTCL = { SCLEX_TCL, 63273, L"Tcl Script", L"tcl; itcl", L"", &KeyWords_TCL, {
-                     { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                     { SCE_TCL__MULTI_COMMENT, 63127, L"Comment", L"fore:#008000", L"" },
-                     { SCE_TCL__MULTI_KEYWORD, 63128, L"Keyword", L"fore:#0000FF", L"" },
-                     { SCE_TCL_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
-                     { SCE_TCL_IN_QUOTE, 63131, L"String", L"fore:#008080", L"" },
-                     { SCE_TCL_OPERATOR, 63132, L"Operator", L"", L"" },
-                     { SCE_TCL_IDENTIFIER, 63129, L"Identifier", L"fore:#800080", L"" },
-                     { SCE_TCL__MULTI_SUBSTITUTION, 63274, L"Substitution", L"fore:#CC0000", L"" },
-                     { SCE_TCL_MODIFIER, 63275, L"Modifier", L"fore:#FF00FF", L"" },
-                     { -1, 00000, L"", L"", L"" } } };
-
-
-KEYWORDLIST KeyWords_AU3 = {
-"and byref case const continuecase continueloop default dim "
-"do else elseif endfunc endif endselect endswitch endwith enum exit exitloop false "
-"for func global if in local next not or redim return select step switch then to true "
-"until wend while with",
-"abs acos adlibdisable adlibenable asc ascw asin assign atan "
-"autoitsetoption autoitwingettitle autoitwinsettitle beep binary binarylen binarymid "
-"binarytostring bitand bitnot bitor bitrotate bitshift bitxor blockinput break call "
-"cdtray ceiling chr chrw clipget clipput consoleread consolewrite consolewriteerror "
-"controlclick controlcommand controldisable controlenable controlfocus controlgetfocus "
-"controlgethandle controlgetpos controlgettext controlhide controllistview controlmove "
-"controlsend controlsettext controlshow controltreeview cos dec dircopy dircreate "
-"dirgetsize dirmove dirremove dllcall dllcallbackfree dllcallbackgetptr dllcallbackregister "
-"dllclose dllopen dllstructcreate dllstructgetdata dllstructgetptr dllstructgetsize "
-"dllstructsetdata drivegetdrive drivegetfilesystem drivegetlabel drivegetserial drivegettype "
-"drivemapadd drivemapdel drivemapget drivesetlabel drivespacefree drivespacetotal "
-"drivestatus envget envset envupdate eval execute exp filechangedir fileclose filecopy "
-"filecreatentfslink filecreateshortcut filedelete fileexists filefindfirstfile filefindnextfile "
-"filegetattrib filegetlongname filegetshortcut filegetshortname filegetsize filegettime "
-"filegetversion fileinstall filemove fileopen fileopendialog fileread filereadline "
-"filerecycle filerecycleempty filesavedialog fileselectfolder filesetattrib filesettime "
-"filewrite filewriteline floor ftpsetproxy guicreate guictrlcreateavi guictrlcreatebutton "
-"guictrlcreatecheckbox guictrlcreatecombo guictrlcreatecontextmenu guictrlcreatedate "
-"guictrlcreatedummy guictrlcreateedit guictrlcreategraphic guictrlcreategroup guictrlcreateicon "
-"guictrlcreateinput guictrlcreatelabel guictrlcreatelist guictrlcreatelistview guictrlcreatelistviewitem "
-"guictrlcreatemenu guictrlcreatemenuitem guictrlcreatemonthcal guictrlcreateobj guictrlcreatepic "
-"guictrlcreateprogress guictrlcreateradio guictrlcreateslider guictrlcreatetab guictrlcreatetabitem "
-"guictrlcreatetreeview guictrlcreatetreeviewitem guictrlcreateupdown guictrldelete "
-"guictrlgethandle guictrlgetstate guictrlread guictrlrecvmsg guictrlregisterlistviewsort "
-"guictrlsendmsg guictrlsendtodummy guictrlsetbkcolor guictrlsetcolor guictrlsetcursor "
-"guictrlsetdata guictrlsetdefbkcolor guictrlsetdefcolor guictrlsetfont guictrlsetgraphic "
-"guictrlsetimage guictrlsetlimit guictrlsetonevent guictrlsetpos guictrlsetresizing "
-"guictrlsetstate guictrlsetstyle guictrlsettip guidelete guigetcursorinfo guigetmsg "
-"guigetstyle guiregistermsg guisetaccelerators guisetbkcolor guisetcoord guisetcursor "
-"guisetfont guisethelp guiseticon guisetonevent guisetstate guisetstyle guistartgroup "
-"guiswitch hex hotkeyset httpsetproxy hwnd inetget inetgetsize inidelete iniread inireadsection "
-"inireadsectionnames inirenamesection iniwrite iniwritesection inputbox int isadmin "
-"isarray isbinary isbool isdeclared isdllstruct isfloat ishwnd isint iskeyword isnumber "
-"isobj isptr isstring log memgetstats mod mouseclick mouseclickdrag mousedown mousegetcursor "
-"mousegetpos mousemove mouseup mousewheel msgbox number objcreate objevent objevent "
-"objget objname opt ping pixelchecksum pixelgetcolor pixelsearch pluginclose pluginopen "
-"processclose processexists processgetstats processlist processsetpriority processwait "
-"processwaitclose progressoff progresson progressset ptr random regdelete regenumkey "
-"regenumval regread regwrite round run runas runaswait runwait send sendkeepactive "
-"seterror setextended shellexecute shellexecutewait shutdown sin sleep soundplay soundsetwavevolume "
-"splashimageon splashoff splashtexton sqrt srandom statusbargettext stderrread stdinwrite "
-"stdioclose stdoutread string stringaddcr stringcompare stringformat stringinstr stringisalnum "
-"stringisalpha stringisascii stringisdigit stringisfloat stringisint stringislower "
-"stringisspace stringisupper stringisxdigit stringleft stringlen stringlower stringmid "
-"stringregexp stringregexpreplace stringreplace stringright stringsplit stringstripcr "
-"stringstripws stringtobinary stringtrimleft stringtrimright stringupper tan tcpaccept "
-"tcpclosesocket tcpconnect tcplisten tcpnametoip tcprecv tcpsend tcpshutdown tcpstartup "
-"timerdiff timerinit tooltip traycreateitem traycreatemenu traygetmsg trayitemdelete "
-"trayitemgethandle trayitemgetstate trayitemgettext trayitemsetonevent trayitemsetstate "
-"trayitemsettext traysetclick trayseticon traysetonevent traysetpauseicon traysetstate "
-"traysettooltip traytip ubound udpbind udpclosesocket udpopen udprecv udpsend udpshutdown "
-"udpstartup vargettype winactivate winactive winclose winexists winflash wingetcaretpos "
-"wingetclasslist wingetclientsize wingethandle wingetpos wingetprocess wingetstate "
-"wingettext wingettitle winkill winlist winmenuselectitem winminimizeall winminimizeallundo "
-"winmove winsetontop winsetstate winsettitle winsettrans winwait winwaitactive winwaitclose "
-"winwaitnotactive",
-"@appdatacommondir @appdatadir @autoitexe @autoitpid @autoitunicode "
-"@autoitversion @autoitx64 @com_eventobj @commonfilesdir @compiled @computername @comspec "
-"@cr @crlf @desktopcommondir @desktopdepth @desktopdir @desktopheight @desktoprefresh "
-"@desktopwidth @documentscommondir @error @exitcode @exitmethod @extended @favoritescommondir "
-"@favoritesdir @gui_ctrlhandle @gui_ctrlid @gui_dragfile @gui_dragid @gui_dropid @gui_winhandle "
-"@homedrive @homepath @homeshare @hotkeypressed @hour @inetgetactive @inetgetbytesread "
-"@ipaddress1 @ipaddress2 @ipaddress3 @ipaddress4 @kblayout @lf @logondnsdomain @logondomain "
-"@logonserver @mday @min @mon @mydocumentsdir @numparams @osbuild @oslang @osservicepack "
-"@ostype @osversion @processorarch @programfilesdir @programscommondir @programsdir "
-"@scriptdir @scriptfullpath @scriptlinenumber @scriptname @sec @startmenucommondir "
-"@startmenudir @startupcommondir @startupdir @sw_disable @sw_enable @sw_hide @sw_lock "
-"@sw_maximize @sw_minimize @sw_restore @sw_show @sw_showdefault @sw_showmaximized "
-"@sw_showminimized @sw_showminnoactive @sw_showna @sw_shownoactivate @sw_shownormal "
-"@sw_unlock @systemdir @tab @tempdir @tray_id @trayiconflashing @trayiconvisible @username "
-"@userprofiledir @wday @windowsdir @workingdir @yday @year",
-"{!} {#} {^} {{} {}} {+} {alt} {altdown} {altup} {appskey} "
-"{asc} {backspace} {break} {browser_back} {browser_favorites} {browser_forward} {browser_home} "
-"{browser_refresh} {browser_search} {browser_stop} {bs} {capslock} {ctrldown} {ctrlup} "
-"{del} {delete} {down} {end} {enter} {esc} {escape} {f1} {f10} {f11} {f12} {f2} {f3} "
-"{f4} {f5} {f6} {f7} {f8} {f9} {home} {ins} {insert} {lalt} {launch_app1} {launch_app2} "
-"{launch_mail} {launch_media} {lctrl} {left} {lshift} {lwin} {lwindown} {lwinup} {media_next} "
-"{media_play_pause} {media_prev} {media_stop} {numlock} {numpad0} {numpad1} {numpad2} "
-"{numpad3} {numpad4} {numpad5} {numpad6} {numpad7} {numpad8} {numpad9} {numpadadd} "
-"{numpaddiv} {numpaddot} {numpadenter} {numpadmult} {numpadsub} {pause} {pgdn} {pgup} "
-"{printscreen} {ralt} {rctrl} {right} {rshift} {rwin} {rwindown} {rwinup} {scrolllock} "
-"{shiftdown} {shiftup} {sleep} {space} {tab} {up} {volume_down} {volume_mute} {volume_up}",
-"#ce #comments-end #comments-start #cs #include #include-once "
-"#notrayicon #requireadmin",
-"#autoit3wrapper_au3check_parameters #autoit3wrapper_au3check_stop_onwarning "
-"#autoit3wrapper_change2cui #autoit3wrapper_compression #autoit3wrapper_cvswrapper_parameters "
-"#autoit3wrapper_icon #autoit3wrapper_outfile #autoit3wrapper_outfile_type #autoit3wrapper_plugin_funcs "
-"#autoit3wrapper_res_comment #autoit3wrapper_res_description #autoit3wrapper_res_field "
-"#autoit3wrapper_res_file_add #autoit3wrapper_res_fileversion #autoit3wrapper_res_fileversion_autoincrement "
-"#autoit3wrapper_res_icon_add #autoit3wrapper_res_language #autoit3wrapper_res_legalcopyright "
-"#autoit3wrapper_res_requestedexecutionlevel #autoit3wrapper_res_savesource #autoit3wrapper_run_after "
-"#autoit3wrapper_run_au3check #autoit3wrapper_run_before #autoit3wrapper_run_cvswrapper "
-"#autoit3wrapper_run_debug_mode #autoit3wrapper_run_obfuscator #autoit3wrapper_run_tidy "
-"#autoit3wrapper_tidy_stop_onerror #autoit3wrapper_useansi #autoit3wrapper_useupx "
-"#autoit3wrapper_usex64 #autoit3wrapper_version #endregion #forceref #obfuscator_ignore_funcs "
-"#obfuscator_ignore_variables #obfuscator_parameters #region #tidy_parameters",
-"", "", "" };
-
-
-EDITLEXER lexAU3 = { SCLEX_AU3, 63276, L"AutoIt3", L"au3", L"", &KeyWords_AU3, {
-                     { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                     { MULTI_STYLE(SCE_AU3_COMMENT,SCE_AU3_COMMENTBLOCK,0,0), 63127, L"Comment", L"fore:#008000", L"" },
-                     { SCE_AU3_NUMBER, 63130, L"Number", L"fore:#FF0000", L"" },
-                     { SCE_AU3_FUNCTION, 63277, L"Function", L"fore:#0A246A; bold", L"" },
-                     { SCE_AU3_KEYWORD, 63128, L"Keyword", L"fore:#0A246A; bold", L"" },
-                     { SCE_AU3_MACRO, 63278, L"Macro", L"fore:#0080FF", L"" },
-                     { SCE_AU3_STRING, 63131, L"String", L"fore:#008000", L"" },
-                     { SCE_AU3_OPERATOR, 63132, L"Operator", L"", L"" },
-                     { SCE_AU3_VARIABLE, 63249, L"Variable", L"", L"" },
-                     { SCE_AU3_SENT, 63279, L"Send Key", L"fore:#0080FF", L"" },
-                     { SCE_AU3_PREPROCESSOR, 63133, L"Preprocessor", L"fore:#808080", L"" },
-                     { SCE_AU3_SPECIAL, 63280, L"Special", L"fore:#808080", L"" },
-                     { -1, 00000, L"", L"", L"" } } };
-
-
-EDITLEXER lexLATEX = { SCLEX_LATEX, 63281, L"LaTeX Files", L"tex; latex", L"", &KeyWords_NULL, {
-                       { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
-                       { SCE_L_COMMAND, 63236, L"Command", L"fore:#0000FF", L"" },
-                       { SCE_L_TAG, 63282, L"Tag", L"fore:#0000FF", L"" },
-                       { SCE_L_MATH, 63283, L"Math", L"fore:#FF0000", L"" },
-                       { SCE_L_COMMENT, 63127, L"Comment", L"fore:#008000", L"" },
-                       { -1, 00000, L"", L"", L"" } } };
-
-
-EDITLEXER lexANSI = { SCLEX_NULL, 63258, L"ANSI Art", L"nfo; diz", L"", &KeyWords_NULL, {
-                      { STYLE_DEFAULT, 63106, L"Default", L"font:Lucida Console", L"" },
-                      { STYLE_LINENUMBER, 63101, L"Margins and Line Numbers", L"font:Lucida Console; size:-2", L"" },
-                      { STYLE_BRACELIGHT, 63102, L"Matching Braces", L"size:+0", L"" },
-                      { STYLE_BRACEBAD, 63103, L"Matching Braces Error", L"size:+0", L"" },
-                      { -1, 00000, L"", L"", L"" } } };
-
-
 // This array holds all the lexers...
 PEDITLEXER pLexArray[NUMLEXERS] =
 {
   &lexDefault,
-  &lexANSI,
-  &lexCONF, //Apache Config Scripts
-  &lexASM,
-  &lexAU3,
-  &lexBAT,
-  &lexINI,
+  &lexHTML,
+  &lexXML,
+  &lexCSS,
+  &lexJS,
+  &lexVBS,
   &lexCPP,
   &lexCS,
-  &lexCSS,
-  &lexDIFF,
-  &lexINNO,
-  &lexJAVA,
-  &lexJS,
-  &lexMAK,
-  &lexLATEX,
-  &lexLUA,
-  &lexNSIS,
-  &lexPAS,
-  &lexPL,
-  &lexPS,
-  &lexPY,
   &lexRC,
-  &lexRUBY,
-  &lexBASH,
-  &lexSQL,
-  &lexTCL,
-  &lexVBS,
+  &lexMAK,
+  &lexJAVA,
   &lexVB,
-  &lexHTML,
-  &lexXML
+  &lexPAS,
+  &lexASM,
+  &lexSQL,
+  &lexPL,
+  &lexPY,
+  &lexINI,
+  &lexCONF,
+  &lexPS,
+  &lexBAT,
+  &lexDIFF
 };
 
 
@@ -1690,8 +1253,6 @@ void Style_SetLexer(HWND hwnd,PEDITLEXER pLexNew)
     SendMessage(hwnd,SCI_SETPROPERTY,(WPARAM)"styling.within.preprocessor",(LPARAM)"1");
   else if (pLexNew->iLexer == SCLEX_PASCAL)
     SendMessage(hwnd,SCI_SETPROPERTY,(WPARAM)"lexer.pascal.smart.highlighting",(LPARAM)"1");
-  else if (pLexNew->iLexer == SCLEX_NSIS)
-    SendMessage(hwnd,SCI_SETPROPERTY,(WPARAM)"nsis.ignorecase",(LPARAM)"1");
   else if (pLexNew->iLexer == SCLEX_SQL) {
     SendMessage(hwnd,SCI_SETPROPERTY,(WPARAM)"sql.backslash.escapes",(LPARAM)"1");
     SendMessage(hwnd,SCI_SETPROPERTY,(WPARAM)"lexer.sql.backticks.identifier",(LPARAM)"1");
@@ -1725,15 +1286,14 @@ void Style_SetLexer(HWND hwnd,PEDITLEXER pLexNew)
   if (!Style_StrGetColor(FALSE,lexDefault.Styles[0+iIdx].szValue,&iValue))
     SendMessage(hwnd,SCI_STYLESETBACK,STYLE_DEFAULT,(LPARAM)GetSysColor(COLOR_WINDOW));       // default window color
 
-  if (pLexNew->iLexer != SCLEX_NULL || pLexNew == &lexANSI)
+  if (pLexNew->iLexer != SCLEX_NULL)
     Style_SetStyles(hwnd,pLexNew->Styles[0].iStyle,pLexNew->Styles[0].szValue); // lexer default
   SendMessage(hwnd,SCI_STYLECLEARALL,0,0);
 
   Style_SetStyles(hwnd,lexDefault.Styles[1+iIdx].iStyle,lexDefault.Styles[1+iIdx].szValue); // linenumber
   Style_SetStyles(hwnd,lexDefault.Styles[2+iIdx].iStyle,lexDefault.Styles[2+iIdx].szValue); // brace light
   Style_SetStyles(hwnd,lexDefault.Styles[3+iIdx].iStyle,lexDefault.Styles[3+iIdx].szValue); // brace bad
-  if (pLexNew != &lexANSI)
-    Style_SetStyles(hwnd,lexDefault.Styles[4+iIdx].iStyle,lexDefault.Styles[4+iIdx].szValue); // control char
+  Style_SetStyles(hwnd,lexDefault.Styles[4+iIdx].iStyle,lexDefault.Styles[4+iIdx].szValue); // control char
   Style_SetStyles(hwnd,lexDefault.Styles[5+iIdx].iStyle,lexDefault.Styles[5+iIdx].szValue); // indent guide
 
   // More default values...
@@ -1861,7 +1421,7 @@ void Style_SetLexer(HWND hwnd,PEDITLEXER pLexNew)
   }
 
   // Extra Line Spacing
-  if (Style_StrGetSize(lexDefault.Styles[12+iIdx].szValue,&iValue) && pLexNew != &lexANSI) {
+  if (Style_StrGetSize(lexDefault.Styles[12+iIdx].szValue,&iValue)) {
     int iAscent = 0;
     int iDescent = 0;
     iValue = min(max(iValue,0),64);
@@ -1881,45 +1441,10 @@ void Style_SetLexer(HWND hwnd,PEDITLEXER pLexNew)
     //wsprintf(lexDefault.Styles[12+iIdx].szValue,L"size:0");
   }
 
-  { // set folding style; braces are for scoping only
-    static const int iMarkerIDs[] =
-    {
-      SC_MARKNUM_FOLDEROPEN,
-      SC_MARKNUM_FOLDER,
-      SC_MARKNUM_FOLDERSUB,
-      SC_MARKNUM_FOLDERTAIL,
-      SC_MARKNUM_FOLDEREND,
-      SC_MARKNUM_FOLDEROPENMID,
-      SC_MARKNUM_FOLDERMIDTAIL
-    };
-
-    int i;
-
-    COLORREF clrFore = SciCall_StyleGetFore(STYLE_DEFAULT);
-    COLORREF clrBack = SciCall_StyleGetBack(STYLE_DEFAULT);
-
-    SciCall_SetFoldMarginColour(TRUE, clrBack);
-    SciCall_SetFoldMarginHiColour(TRUE, clrBack);
-
-    // Set marker color to the average of clrFore and clrBack
-    clrFore = (((clrFore & 0xFF0000) + (clrBack & 0xFF0000)) >> 1 & 0xFF0000) |
-              (((clrFore & 0x00FF00) + (clrBack & 0x00FF00)) >> 1 & 0x00FF00) |
-              (((clrFore & 0x0000FF) + (clrBack & 0x0000FF)) >> 1 & 0x0000FF);
-
-    // Rounding hack for pure white against pure black
-    if (clrFore == 0x7F7F7F) clrFore = 0x808080;
-
-    for (i = 0; i < COUNTOF(iMarkerIDs); ++i)
-    {
-      SciCall_MarkerSetBack(iMarkerIDs[i], clrFore);
-      SciCall_MarkerSetFore(iMarkerIDs[i], clrBack);
-    }
-  } // end set folding style
-
   if (SendMessage(hwnd,SCI_GETINDENTATIONGUIDES,0,0) != SC_IV_NONE)
     Style_SetIndentGuides(hwnd,TRUE);
 
-  if (pLexNew->iLexer != SCLEX_NULL || pLexNew == &lexANSI)
+  if (pLexNew->iLexer != SCLEX_NULL)
   {
     int j;
     i = 1;
@@ -2104,14 +1629,6 @@ PEDITLEXER __fastcall Style_SniffShebang(char *pchText)
       return(&lexPL);
     else if ((pch - pchText) >= 6 && StrCmpNIA(pch-6,"python",6) == 0)
       return(&lexPY);
-    else if ((pch - pchText) >= 3 && StrCmpNA(pch-3,"tcl",3) == 0)
-      return(&lexTCL);
-    else if ((pch - pchText) >= 4 && StrCmpNA(pch-4,"wish",4) == 0)
-      return(&lexTCL);
-    else if ((pch - pchText) >= 5 && StrCmpNA(pch-5,"tclsh",5) == 0)
-      return(&lexTCL);
-    else if ((pch - pchText) >= 2 && StrCmpNA(pch-2,"sh",2) == 0)
-      return(&lexBASH);
   }
 
   return(NULL);
@@ -2173,7 +1690,7 @@ extern FILEVARS fvCurFile;
 
 void Style_SetLexerFromFile(HWND hwnd,LPCWSTR lpszFile)
 {
-  LPWSTR lpszExt = PathFindExtension(lpszFile);
+  LPWSTR lpszExt;
   BOOL  bFound = FALSE;
   PEDITLEXER pLexNew = pLexArray[iDefaultLexer];
   PEDITLEXER pLexSniffed;
@@ -2190,13 +1707,8 @@ void Style_SetLexerFromFile(HWND hwnd,LPCWSTR lpszFile)
       SendMessage(hwnd,SCI_GETTEXT,(WPARAM)COUNTOF(tchText)-1,(LPARAM)tchText);
       StrTrimA(tchText," \t\n\r");
       if (pLexSniffed = Style_SniffShebang(tchText)) {
-        if (iEncoding != g_DOSEncoding || pLexSniffed != &lexDefault || (
-            lstrcmpi(lpszExt,L"nfo") && lstrcmpi(lpszExt,L"diz"))) {
-          // Although .nfo and .diz were removed from the default lexer's
-          // default extensions list, they may still presist in the user's INI
-          pLexNew = pLexSniffed;
-          bFound = TRUE;
-        }
+        pLexNew = pLexSniffed;
+        bFound = TRUE;
       }
     }
 
@@ -2212,6 +1724,7 @@ void Style_SetLexerFromFile(HWND hwnd,LPCWSTR lpszFile)
     }
   }
 
+  lpszExt = PathFindExtension(lpszFile);
   if (!bFound && bAutoSelect && /* bAutoSelect == FALSE skips lexer search */
       (lpszFile && lstrlen(lpszFile) > 0 && *lpszExt)) {
 
@@ -2259,9 +1772,6 @@ void Style_SetLexerFromFile(HWND hwnd,LPCWSTR lpszFile)
       bFound = TRUE;
     }
   }
-
-  if (!bFound && iEncoding == g_DOSEncoding)
-    pLexNew = &lexANSI;
 
   // Apply the new lexer
   Style_SetLexer(hwnd,pLexNew);
@@ -2408,34 +1918,6 @@ BOOL Style_GetOpenDlgFilterStr(LPWSTR lpszFilter,int cchFilter)
 
 //=============================================================================
 //
-//  IsConsolasAvailable()
-//
-int CALLBACK EnumFontsProc( CONST LOGFONT *plf, CONST TEXTMETRIC *ptm,
-                            DWORD FontType, LPARAM lParam )
-{
-  *((PBOOL)lParam) = TRUE;
-  return(FALSE);
-
-}
-
-BOOL IsConsolasAvailable( )
-{
-  // Yes, EnumFonts is old, but we neither need nor care about the additional
-  // info returned by the newer font enumeration APIs; all that we care about
-  // is whether the callback is ever called.
-
-  BOOL fFound = FALSE;
-
-  HDC hDC = GetDC(NULL);
-  EnumFonts(hDC, TEXT("Consolas"), EnumFontsProc, (LPARAM)&fFound);
-  ReleaseDC(NULL, hDC);
-
-  return(fFound);
-}
-
-
-//=============================================================================
-//
 //  Style_StrGetFont()
 //
 BOOL Style_StrGetFont(LPCWSTR lpszStyle,LPWSTR lpszFont,int cchFont)
@@ -2449,19 +1931,7 @@ BOOL Style_StrGetFont(LPCWSTR lpszStyle,LPWSTR lpszFont,int cchFont)
     if (p = StrChr(tch,L';'))
       *p = L'\0';
     TrimString(tch);
-
-    if (lstrcmpi(tch,L"Default") == 0)
-    {
-      if (IsConsolasAvailable())
-        lstrcpyn(lpszFont,L"Consolas",cchFont);
-      else
-        lstrcpyn(lpszFont,L"Lucida Console",cchFont);
-    }
-    else
-    {
-      lstrcpyn(lpszFont,tch,cchFont);
-    }
-
+    lstrcpyn(lpszFont,tch,cchFont);
     return TRUE;
   }
   return FALSE;
@@ -3699,7 +3169,7 @@ void Style_ConfigDlg(HWND hwnd)
   else {
     fStylesModified = TRUE;
     if (lstrlen(szIniFile) == 0 && !fWarnedNoIniFile) {
-      MsgBox(MBWARN,IDS_SETTINGSNOTSAVED);
+      MsgBox(MBINFO,IDS_SETTINGSNOTSAVED);
       fWarnedNoIniFile = TRUE;
     }
   }
