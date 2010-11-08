@@ -13,10 +13,10 @@ ECHO:______________________________ && ECHO.
 
 rem compiler command line
 IF /I "%1"=="x86" (
-set CLADDCMD=/D "STATIC_BUILD" /D "SCI_LEXER" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /D "UNICODE" /D "WIN32" /D "_WIN32_WINNT=0x0501"
+  set CLADDCMD=/D "STATIC_BUILD" /D "SCI_LEXER" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /D "UNICODE" /D "WIN32" /D "_WIN32_WINNT=0x0501"
 )
 IF /I "%1"=="x64" (
-set CLADDCMD=/D "STATIC_BUILD" /D "SCI_LEXER" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /D "UNICODE" /D "_WIN64" /D "_WIN32_WINNT=0x0502" /wd4133 /wd4244 /wd4267
+  set CLADDCMD=/D "STATIC_BUILD" /D "SCI_LEXER" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /D "UNICODE" /D "_WIN64" /D "_WIN32_WINNT=0x0502" /wd4133 /wd4244 /wd4267
 )
 
 cl /Fo"%OBJDIR%/" /I "..\scintilla\include" /I "..\scintilla\lexers" /I "..\scintilla\lexlib" /I "..\scintilla\src" /I "..\scintilla\win32" %CLADDCMD% /c /EHsc /MD /O2 /GS /GT /GL /W3 /MP^
@@ -81,13 +81,7 @@ cl /Fo"%OBJDIR%/" /I "..\scintilla\include" /I "..\scintilla\lexers" /I "..\scin
  /Tc "..\src\Styles.c"^
  /Tp "..\src\Print.cpp"
 
-IF %ERRORLEVEL% NEQ 0 (
-ECHO. && ECHO:______________________________
-ECHO:[ERROR] Compilation failed!!!
-ECHO:______________________________ && ECHO.
-PAUSE
-EXIT
-)
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
 ECHO. && ECHO:______________________________
 ECHO:[INFO] resource compiler stage...
@@ -95,20 +89,14 @@ ECHO:______________________________ && ECHO.
 
 rem resource compiler command line
 IF /I "%1"=="x86" (
-set RCADDCMD=/d "WIN32"
+  set RCADDCMD=/d "WIN32"
 )
 IF /I "%1"=="x64" (
-set RCADDCMD=/d "_WIN64"
+  set RCADDCMD=/d "_WIN64"
 )
 
 rc /d "_UNICODE" /d "UNICODE" %RCADDCMD% /fo"%OBJDIR%/Notepad2.res" "..\src\Notepad2.rc"
-IF %ERRORLEVEL% NEQ 0 (
-ECHO. && ECHO:______________________________
-ECHO:[ERROR] Compilation failed!!!
-ECHO:______________________________ && ECHO.
-PAUSE
-EXIT
-)
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
 ECHO. && ECHO:______________________________
 ECHO:[INFO] linking stage...
@@ -116,12 +104,12 @@ ECHO:______________________________ && ECHO.
 
 rem linker command line
 IF /I "%1"=="x86" (
-set LNKADDCMD=/SUBSYSTEM:WINDOWS,5.01 /MACHINE:X86
-set WDK_LIB=msvcrt_winxp.obj
+  set LNKADDCMD=/SUBSYSTEM:WINDOWS,5.01 /MACHINE:X86
+  set WDK_LIB=msvcrt_winxp.obj
 )
 IF /I "%1"=="x64" (
-set LNKADDCMD=/SUBSYSTEM:WINDOWS,5.02 /MACHINE:X64
-set WDK_LIB=msvcrt_win2003.obj
+  set LNKADDCMD=/SUBSYSTEM:WINDOWS,5.02 /MACHINE:X64
+  set WDK_LIB=msvcrt_win2003.obj
 )
 
 link /OUT:"%OUTDIR%/Notepad2.exe" /INCREMENTAL:NO /RELEASE %LNKADDCMD% /OPT:REF /OPT:ICF /DYNAMICBASE /NXCOMPAT^
@@ -190,13 +178,7 @@ link /OUT:"%OUTDIR%/Notepad2.exe" /INCREMENTAL:NO /RELEASE %LNKADDCMD% /OPT:REF 
  "%OBJDIR%\XPM.obj"^
  "%WDK_LIB%"
 
-IF %ERRORLEVEL% NEQ 0 (
-ECHO. && ECHO:______________________________
-ECHO:[ERROR] Compilation failed!!!
-ECHO:______________________________ && ECHO.
-PAUSE
-EXIT
-)
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
 
 ECHO. && ECHO:______________________________
 ECHO:[INFO] manifest stage...
@@ -204,12 +186,16 @@ ECHO:______________________________ && ECHO.
 
 rem manifest tool command line
 "%SDKDIR%\Bin\mt.exe" -manifest "..\res\Notepad2.exe.manifest" -outputresource:"%OUTDIR%\Notepad2.exe;#1"
-IF %ERRORLEVEL% NEQ 0 (
+IF %ERRORLEVEL% NEQ 0 GOTO :ErrorDetected
+
+ECHO. && ECHO:______________________________
+GOTO :EOF
+
+
+:ErrorDetected
 ECHO. && ECHO:______________________________
 ECHO:[ERROR] Compilation failed!!!
 ECHO:______________________________ && ECHO.
+
 PAUSE
 EXIT
-)
-
-ECHO. && ECHO:______________________________
