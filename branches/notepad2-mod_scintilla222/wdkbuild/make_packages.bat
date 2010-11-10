@@ -45,10 +45,10 @@ PUSHD packages
 
 rem Compress everything into a single ZIP file
 DEL Notepad2-mod.zip >NUL 2>&1
-START "" /B /WAIT "%TOOLS_PATH%\7za.exe" a -tzip -mx=9 Notepad2-mod.zip * -x!md5hashes -x!sha1hashes >NUL
+START "" /B /WAIT "%TOOLS_PATH%\7za.exe" a -tzip -mx=9 Notepad2-mod_%PREFFIX%.zip * -x!md5hashes -x!sha1hashes >NUL
 IF %ERRORLEVEL% NEQ 0 CALL :SUBMSG "ERROR" "Compilation failed!"
 
-CALL :SUBMSG "INFO" "Notepad2-mod.zip created successfully!"
+CALL :SUBMSG "INFO" "Notepad2-mod_%PREFFIX%.zip created successfully!"
 
 POPD
 
