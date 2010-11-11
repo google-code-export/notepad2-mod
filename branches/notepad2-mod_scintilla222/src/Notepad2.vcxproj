@@ -230,6 +230,7 @@ update_version.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\scintilla\lexers\LexAHK.cxx" />
     <ClCompile Include="..\scintilla\lexers\LexAsm.cxx" />
     <ClCompile Include="..\scintilla\lexers\LexAU3.cxx" />
     <ClCompile Include="..\scintilla\lexers\LexBash.cxx" />

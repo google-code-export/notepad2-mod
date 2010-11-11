@@ -13,22 +13,7 @@ SET TOOLS_PATH=..\..\distrib\tools
 CALL build.cmd
 IF %ERRORLEVEL% NEQ 0 CALL :SUBMSG "ERROR" "Compilation failed!"
 
-rem Get the version
-FOR /f "tokens=3,4 delims= " %%K IN (
-  'FINDSTR /I /L /C:"define VERSION_MAJOR" "..\src\Version.h"') DO (
-  SET "VerMajor=%%K"&Call :SubVerMajor %%VerMajor:*Z=%%)
-FOR /f "tokens=3,4 delims= " %%L IN (
-  'FINDSTR /I /L /C:"define VERSION_MINOR" "..\src\Version.h"') DO (
-  SET "VerMinor=%%L"&Call :SubVerMinor %%VerMinor:*Z=%%)
-FOR /f "tokens=3,4 delims= " %%M IN (
-  'FINDSTR /I /L /C:"define VERSION_BUILD" "..\src\Version.h"') DO (
-  SET "VerBuild=%%M"&Call :SubVerBuild %%VerBuild:*Z=%%)
-FOR /f "tokens=3,4 delims= " %%N IN (
-  'FINDSTR /I /L /C:"define VERSION_REV" "..\src\Version_rev.h"') DO (
-  SET "VerRev=%%N"&Call :SubVerRev %%VerRev:*Z=%%)
-
-SET NP2_VER=%VerMajor%.%VerMinor%.%VerBuild%
-
+CALL :SubVersion
 
 CALL :SubZipFiles Release x86-32
 CALL :SubZipFiles Release_x64 x86-64
@@ -64,8 +49,7 @@ EXIT /B
 TITLE Creating the %2 ZIP file...
 CALL :SUBMSG "INFO" "Creating the %2 ZIP file..."
 
-MD "temp_zip" >NUL 2>&1
-MD "packages" >NUL 2>&1
+MD "temp_zip" "packages" >NUL 2>&1
 COPY "..\License.txt" "temp_zip\" /Y /V
 COPY "..\%1\Notepad2.exe" "temp_zip\" /Y /V
 COPY "..\distrib\res\cabinet\notepad2.ini" "temp_zip\Notepad2.ini" /Y /V
@@ -138,10 +122,27 @@ MOVE setup.%BINDIR%\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent
 rem Cleanup
 RD setup.%BINDIR% >NUL 2>&1
 RD /Q binaries >NUL 2>&1
-RD /Q /S addon >NUL 2>&1
-RD /Q /S obj >NUL 2>&1
+RD /Q /S addon obj >NUL 2>&1
 
 POPD
+GOTO :EOF
+
+:SubVersion
+rem Get the version
+FOR /f "tokens=3,4 delims= " %%K IN (
+  'FINDSTR /I /L /C:"define VERSION_MAJOR" "..\src\Version.h"') DO (
+  SET "VerMajor=%%K"&Call :SubVerMajor %%VerMajor:*Z=%%)
+FOR /f "tokens=3,4 delims= " %%L IN (
+  'FINDSTR /I /L /C:"define VERSION_MINOR" "..\src\Version.h"') DO (
+  SET "VerMinor=%%L"&Call :SubVerMinor %%VerMinor:*Z=%%)
+FOR /f "tokens=3,4 delims= " %%M IN (
+  'FINDSTR /I /L /C:"define VERSION_BUILD" "..\src\Version.h"') DO (
+  SET "VerBuild=%%M"&Call :SubVerBuild %%VerBuild:*Z=%%)
+FOR /f "tokens=3,4 delims= " %%N IN (
+  'FINDSTR /I /L /C:"define VERSION_REV" "..\src\Version_rev.h"') DO (
+  SET "VerRev=%%N"&Call :SubVerRev %%VerRev:*Z=%%)
+
+SET NP2_VER=%VerMajor%.%VerMinor%.%VerBuild%
 GOTO :EOF
 
 :SubVerMajor

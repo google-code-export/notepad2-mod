@@ -5,9 +5,7 @@ IF /I "%1"=="" CALL :SUBMSG "ERROR" "Don't run this script directly, use build.c
 rem create the objects and output directory and delete any files from previous build
 MD "%OBJDIR%" >NUL 2>&1
 DEL "%OUTDIR%\Notepad2.exe" >NUL 2>&1
-DEL "%OBJDIR%\*.idb" >NUL 2>&1
-DEL "%OBJDIR%\*.obj" >NUL 2>&1
-DEL "%OBJDIR%\*.pdb" >NUL 2>&1
+DEL "%OBJDIR%\*.idb" "%OBJDIR%\*.obj" "%OBJDIR%\*.pdb" "%OBJDIR%\*.res" >NUL 2>&1
 
 TITLE Building Notepad2 %1...
 CALL :SUBMSG "INFO" "%1 compilation started!"
@@ -21,6 +19,7 @@ IF /I "%1"=="x64" (SET CLADDCMD=/D "_WIN64" /D "_WIN32_WINNT=0x0502" /wd4133 /wd
 cl /Fo"%OBJDIR%/" /I "..\scintilla\include" /I "..\scintilla\lexers" /I "..\scintilla\lexlib" /I "..\scintilla\src" /I "..\scintilla\win32"^
  /D "STATIC_BUILD" /D "SCI_LEXER" /D "_WINDOWS" /D "NDEBUG" /D "_UNICODE" /D "UNICODE" %CLADDCMD%^
  /c /EHsc /MD /O2 /GS /GT /GL /W3 /MP^
+ /Tp "..\scintilla\lexers\LexAHK.cxx"^
  /Tp "..\scintilla\lexers\LexAsm.cxx"^
  /Tp "..\scintilla\lexers\LexAU3.cxx"^
  /Tp "..\scintilla\lexers\LexBash.cxx"^
@@ -126,6 +125,7 @@ link /OUT:"%OUTDIR%/Notepad2.exe" /INCREMENTAL:NO /RELEASE %LNKADDCMD% /OPT:REF 
  "%OBJDIR%\Helpers.obj"^
  "%OBJDIR%\Indicator.obj"^
  "%OBJDIR%\KeyMap.obj"^
+ "%OBJDIR%\LexAHK.obj"^
  "%OBJDIR%\LexAsm.obj"^
  "%OBJDIR%\LexAU3.obj"^
  "%OBJDIR%\LexBash.obj"^
