@@ -1,7 +1,7 @@
 @ECHO OFF
 SETLOCAL
 SET "PERL_PATH=G:\Installation Programs\Programs\Compiling Stuff\Other\ActivePerl-5.12.2.1202-MSWin32-x86-293621"
-SET PREFFIX=scintilla222
+SET SUFFIX=scintilla222
 
 rem Check the building environment
 IF NOT EXIST "%PERL_PATH%" CALL :SUBMSG "INFO" "The Perl direcotry wasn't specified; the addon won't be built"
@@ -30,10 +30,10 @@ PUSHD packages
 
 rem Compress everything into a single ZIP file
 DEL Notepad2-mod.zip >NUL 2>&1
-START "" /B /WAIT "%TOOLS_PATH%\7za.exe" a -tzip -mx=9 Notepad2-mod_%PREFFIX%.zip * -x!md5hashes -x!sha1hashes >NUL
+START "" /B /WAIT "%TOOLS_PATH%\7za.exe" a -tzip -mx=9 Notepad2-mod_%SUFFIX%.zip * -x!md5hashes -x!sha1hashes >NUL
 IF %ERRORLEVEL% NEQ 0 CALL :SUBMSG "ERROR" "Compilation failed!"
 
-CALL :SUBMSG "INFO" "Notepad2-mod_%PREFFIX%.zip created successfully!"
+CALL :SUBMSG "INFO" "Notepad2-mod_%SUFFIX%.zip created successfully!"
 
 POPD
 
@@ -58,13 +58,13 @@ COPY "..\ReadMe-mod.txt" "temp_zip\Readme.txt" /Y /V
 
 PUSHD "temp_zip"
 START "" /B /WAIT "%TOOLS_PATH%\7za.exe" a -tzip -mx=9^
- "Notepad2-mod.%NP2_VER%_r%VerRev%_%2_%PREFFIX%.zip" "License.txt" "Notepad2.exe"^
+ "Notepad2-mod.%NP2_VER%_r%VerRev%_%2_%SUFFIX%.zip" "License.txt" "Notepad2.exe"^
  "Notepad2.ini" "Notepad2.txt" "ReadMe.txt" >NUL
 IF %ERRORLEVEL% NEQ 0 CALL :SUBMSG "ERROR" "Compilation failed!"
 
-CALL :SUBMSG "INFO" "Notepad2-mod.%NP2_VER%_r%VerRev%_%2_%PREFFIX%.zip created successfully!"
+CALL :SUBMSG "INFO" "Notepad2-mod.%NP2_VER%_r%VerRev%_%2_%SUFFIX%.zip created successfully!"
 
-MOVE /Y "Notepad2-mod.%NP2_VER%_r%VerRev%_%2_%PREFFIX%.zip" "..\packages" >NUL 2>&1
+MOVE /Y "Notepad2-mod.%NP2_VER%_r%VerRev%_%2_%SUFFIX%.zip" "..\packages" >NUL 2>&1
 POPD
 RD /S /Q "temp_zip" >NUL 2>&1
 GOTO :EOF
@@ -114,10 +114,10 @@ IF EXIST "%PERL_PATH%" (
 
 MD ..\wdkbuild\packages >NUL 2>&1
 IF EXIST "%PERL_PATH%" (
-  MOVE setup.%BINDIR%\addon.7z    ..\wdkbuild\packages\Notepad2-mod_Addon.%BINDIR%_%PREFFIX%.7z >NUL
+  MOVE setup.%BINDIR%\addon.7z    ..\wdkbuild\packages\Notepad2-mod_Addon.%BINDIR%_%SUFFIX%.7z >NUL
 )
-MOVE setup.%BINDIR%\setupfull.exe ..\wdkbuild\packages\Notepad2-mod_Setup.%BINDIR%_%PREFFIX%.exe >NUL
-MOVE setup.%BINDIR%\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent.%BINDIR%_%PREFFIX%.exe >NUL
+MOVE setup.%BINDIR%\setupfull.exe ..\wdkbuild\packages\Notepad2-mod_Setup.%BINDIR%_%SUFFIX%.exe >NUL
+MOVE setup.%BINDIR%\setuplite.exe ..\wdkbuild\packages\Notepad2-mod_Setup_Silent.%BINDIR%_%SUFFIX%.exe >NUL
 
 rem Cleanup
 RD setup.%BINDIR% >NUL 2>&1
