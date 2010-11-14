@@ -254,7 +254,6 @@ update_version.bat</Command>
     <ClCompile Include="..\scintilla\lexlib\CharacterSet.cxx" />
     <ClCompile Include="..\scintilla\lexlib\LexerBase.cxx" />
     <ClCompile Include="..\scintilla\lexlib\LexerModule.cxx" />
-    <ClCompile Include="..\scintilla\lexlib\LexerNoExceptions.cxx" />
     <ClCompile Include="..\scintilla\lexlib\LexerSimple.cxx" />
     <ClCompile Include="..\scintilla\lexlib\PropSetSimple.cxx" />
     <ClCompile Include="..\scintilla\lexlib\StyleContext.cxx" />
@@ -303,7 +302,6 @@ update_version.bat</Command>
     <ClInclude Include="..\scintilla\lexlib\LexAccessor.h" />
     <ClInclude Include="..\scintilla\lexlib\LexerBase.h" />
     <ClInclude Include="..\scintilla\lexlib\LexerModule.h" />
-    <ClInclude Include="..\scintilla\lexlib\LexerNoExceptions.h" />
     <ClInclude Include="..\scintilla\lexlib\LexerSimple.h" />
     <ClInclude Include="..\scintilla\lexlib\OptionSet.h" />
     <ClInclude Include="..\scintilla\lexlib\PropSetSimple.h" />

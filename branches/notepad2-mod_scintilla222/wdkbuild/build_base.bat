@@ -43,7 +43,6 @@ cl /Fo"%OBJDIR%/" /I "..\scintilla\include" /I "..\scintilla\lexers" /I "..\scin
  /Tp "..\scintilla\lexlib\CharacterSet.cxx"^
  /Tp "..\scintilla\lexlib\LexerBase.cxx"^
  /Tp "..\scintilla\lexlib\LexerModule.cxx"^
- /Tp "..\scintilla\lexlib\LexerNoExceptions.cxx"^
  /Tp "..\scintilla\lexlib\LexerSimple.cxx"^
  /Tp "..\scintilla\lexlib\PropSetSimple.cxx"^
  /Tp "..\scintilla\lexlib\StyleContext.cxx"^
@@ -134,7 +133,6 @@ link /OUT:"%OUTDIR%/Notepad2.exe" /INCREMENTAL:NO /RELEASE %LNKADDCMD% /OPT:REF 
  "%OBJDIR%\LexCSS.obj"^
  "%OBJDIR%\LexerBase.obj"^
  "%OBJDIR%\LexerModule.obj"^
- "%OBJDIR%\LexerNoExceptions.obj"^
  "%OBJDIR%\LexerSimple.obj"^
  "%OBJDIR%\LexHTML.obj"^
  "%OBJDIR%\LexInno.obj"^
