@@ -1756,10 +1756,21 @@ void Style_SetLexer(HWND hwnd,PEDITLEXER pLexNew)
   // Lexer
   SendMessage(hwnd,SCI_SETLEXER,pLexNew->iLexer,0);
 
-  if (pLexNew->iLexer == SCLEX_HTML || pLexNew->iLexer == SCLEX_XML || pLexNew->iLexer == SCLEX_PERL)
+  if (pLexNew->iLexer == SCLEX_HTML || pLexNew->iLexer == SCLEX_XML || pLexNew->iLexer == SCLEX_PERL) {
+    SciCall_SetProperty("fold", "1");
+    SciCall_SetProperty("fold.compact", "0");
+    SciCall_SetProperty("fold.comment", "1");
+    SciCall_SetProperty("fold.html", "1");
+    SciCall_SetProperty("fold.preprocessor", "1");
     SendMessage(hwnd,SCI_SETSTYLEBITS,7,0);
-  else
+  }
+  else {
+    SciCall_SetProperty("fold", "1");
+    SciCall_SetProperty("fold.compact", "0");
+    SciCall_SetProperty("fold.comment", "1");
+    SciCall_SetProperty("fold.preprocessor", "1");
     SendMessage(hwnd,SCI_SETSTYLEBITS,5,0);
+  }
 
   if (pLexNew->iLexer == SCLEX_CPP) {
     SendMessage(hwnd,SCI_SETPROPERTY,(WPARAM)"styling.within.preprocessor",(LPARAM)"1");
