@@ -13,7 +13,7 @@ http://notepad2-mod.googlecode.com/files/notepad2_screenshot_1.png
 http://notepad2-mod.googlecode.com/files/notepad2_screenshot_2.png
 
 
-===AutoHotKey Highlighting===
+===!AutoHotKey Highlighting===
 
 http://notepad2-mod.googlecode.com/files/notepad2_screenshot_ahk.png
 
