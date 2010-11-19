@@ -1343,7 +1343,7 @@ EDITLEXER lexLATEX = { SCLEX_LATEX, 63281, L"LaTeX Files", L"tex; latex", L"", &
 
 
 EDITLEXER lexANSI = { SCLEX_NULL, 63258, L"ANSI Art", L"nfo; diz", L"", &KeyWords_NULL, {
-                      { STYLE_DEFAULT, 63106, L"Default", L"font:Lucida Console", L"" },
+                      { STYLE_DEFAULT, 63126, L"Default", L"font:Lucida Console", L"" },
                       { STYLE_LINENUMBER, 63101, L"Margins and Line Numbers", L"font:Lucida Console; size:-2", L"" },
                       { STYLE_BRACELIGHT, 63102, L"Matching Braces", L"size:+0", L"" },
                       { STYLE_BRACEBAD, 63103, L"Matching Braces Error", L"size:+0", L"" },
@@ -1425,7 +1425,7 @@ KEYWORDLIST KeyWords_AHK = {
 
 
 EDITLEXER lexAHK = { SCLEX_AHK, 63306, L"AutoHotKey Script", L"ahk", L"", &KeyWords_AHK, {
-                    { STYLE_DEFAULT, 63106, L"Default", L"fore:#C0C0C0; bold", L"" },
+                    { STYLE_DEFAULT, 63126, L"Default", L"fore:#C0C0C0; bold", L"" },
                     //{ SCE_AHK_DEFAULT, L"Default", L"", L"" },
                     { SCE_AHK_COMMENTLINE, 63127, L"Comment", L"italics; fore:#008000", L"" },
                     { SCE_AHK_COMMENTBLOCK, 63305, L"Comment Block", L"italics; fore:#008040", L"" },
