@@ -1014,7 +1014,7 @@ KEYWORDLIST KeyWords_NSIS = {
 "mb_rtlreading mb_defbutton1 mb_defbutton2 mb_defbutton3 mb_defbutton4 idabort idcancel idignore "
 "idno idok idretry idyes sd "
 "current all timeout imgid resizetofit listonly textonly both branding "
-"hkcr hkey_classes_root hklm hkey_local_machine hkcu hkey_current_user hku  hkey_users "
+"hkcr hkey_classes_root hklm hkey_local_machine hkcu hkey_current_user hku hkey_users "
 "hkcc hkey_current_config hkdd hkey_dyn_data hkpd hkey_performance_data shctx shell_context silent"
 "left right top bottom true false on off italic underline strike trimleft trimright trimcenter "
 "idd_license idd_dir idd_selcom idd_inst idd_instfiles idd_uninst idd_verify force windows nocustom "
@@ -1054,31 +1054,32 @@ KEYWORDLIST KeyWords_INNO = {
 "allowcancelduringinstall allownoicons allowrootdirectory allowuncpath alwaysrestart alwaysshowcomponentslist "
 "alwaysshowdironreadypage alwaysshowgrouponreadypage alwaysusepersonalgroup appcomments appcontact appcopyright "
 "appenddefaultdirname appenddefaultgroupname appid appmodifypath appmutex appname apppublisher apppublisherurl "
-"appreadmefile appsupporturl appupdatesurl appvername appversion architecturesallowed "
-"architecturesinstallin64bitmode backcolor backcolor2 backcolordirection backsolid changesassociations "
-"changesenvironment compression copyrightfontname copyrightfontsize createappdir createuninstallregkey "
-"defaultdirname defaultgroupname defaultuserinfoname defaultuserinfoorg defaultuserinfoserial dialogfontname "
-"dialogfontsize direxistswarning disabledirpage disablefinishedpage disableprogramgrouppage disablereadymemo "
+"appreadmefile appsupportphone appsupporturl appupdatesurl appvername appversion architecturesallowed "
+"architecturesinstallin64bitmode backcolor backcolor2 backcolordirection backsolid beveledlabel changesassociations "
+"changesenvironment compression compressionthreads copyrightfontname copyrightfontsize createappdir "
+"createuninstallregkey defaultdirname defaultgroupname defaultuserinfoname defaultuserinfoorg defaultuserinfoserial "
+"dialogfontname dialogfontsize direxistswarning disabledirpage disablefinishedpage disableprogramgrouppage disablereadymemo "
 "disablereadypage disablestartupprompt diskclustersize diskslicesize diskspanning enabledirdoesntexistwarning "
 "encryption extradiskspacerequired flatcomponentslist infoafterfile infobeforefile internalcompresslevel "
 "languagedetectionmethod languagecodepage languageid languagename licensefile mergeduplicatefiles minversion "
 "onlybelowversion outputbasefilename outputdir outputmanifestfile password privilegesrequired reservebytes "
-"restartifneededbyrun setupiconfile showcomponentsizes showlanguagedialog showtaskstreelines slicesperdisk "
-"solidcompression sourcedir timestamprounding timestampsinutc titlefontname titlefontsize touchdate touchtime "
-"uninstallable uninstalldisplayicon uninstalldisplayname uninstallfilesdir uninstalllogmode uninstallrestartcomputer "
-"updateuninstalllogappname usepreviousappdir usepreviousgroup useprevioussetuptype useprevioustasks "
-"versioninfoproductname useprevioususerinfo userinfopage usesetupldr versioninfocompany versioninfocopyright "
+"restartifneededbyrun righttoleft setupiconfile setuplogging showcomponentsizes showlanguagedialog showtaskstreelines "
+"showundisplayablelanguages signeduninstaller signeduninstallerdir signtool slicesperdisk "
+"solidcompression sourcedir strongassemblyname timestamprounding timestampsinutc titlefontname titlefontsize touchdate "
+"touchtime uninstallable uninstalldisplayicon uninstalldisplayname uninstallfilesdir uninstalldisplaysize uninstalllogmode "
+"uninstallrestartcomputer updateuninstalllogappname usepreviousappdir usepreviousgroup usepreviouslanguage useprevioussetuptype "
+"useprevioustasks verb versioninfoproductname useprevioususerinfo userinfopage usesetupldr versioninfocompany versioninfocopyright "
 "versioninfodescription versioninfoproductversion versioninfotextversion versioninfoversion versioninfoproducttextversion "
 "welcomefontname welcomefontsize windowshowcaption windowstartmaximized windowresizable windowvisible wizardimagebackcolor "
 "wizardimagefile wizardimagestretch wizardsmallimagefile",
 "afterinstall attribs beforeinstall check comment components copymode description destdir destname excludes "
 "extradiskspacerequired filename flags fontinstall groupdescription hotkey infoafterfile infobeforefile iconfilename "
-"iconindex key languages licensefile messagesfile minversion name onlybelowversion parameters permissions root "
-"runonceid section source statusmsg string subkey tasks terminalservicesaware type types valuedata valuename valuetype workingdir",
-"append define dim else emit endif endsub error expr file for if ifdef "
-"ifexist ifndef ifnexist include insert pragma sub undef",
-"begin break case const continue do downto else end except finally for "
-"function if of procedure repeat then to try until uses var while with",
+"iconindex key languages licensefile messagesfile minversion name onlybelowversion parameters permissions root runonceid "
+"section source statusmsg string subkey tasks terminalservicesaware type types valuedata valuename valuetype workingdir",
+"append define dim else emit elif endif endsub error expr file for if "
+"ifdef ifexist ifndef ifnexist include insert pragma sub undef",
+"and begin break case const continue do downto else end except finally for function "
+"if not of or procedure repeat then to try type until uses var while with",
 "", "", "", "" };
 
 
@@ -1095,7 +1096,7 @@ EDITLEXER lexINNO = { SCLEX_INNOSETUP, 63293, L"Inno Setup Script", L"iss; isl; 
                       { SCE_INNO_KEYWORD_PASCAL, 63297, L"Pascal Keyword", L"fore:#0000FF", L"" },
                     //{ SCE_INNO_KEYWORD_USER, L"User Defined", L"", L"" },
                       { MULTI_STYLE(SCE_INNO_STRING_DOUBLE,SCE_INNO_STRING_SINGLE,0,0), 63131, L"String", L"fore:#008080", L"" },
-                    //{ SCE_INNO_IDENTIFIER, L"Identifier", L"", L"" },
+                    //{ SCE_INNO_IDENTIFIER, 63129, L"Identifier", L"", L"" },
                       { -1, 00000, L"", L"", L"" } } };
 
 
@@ -1109,13 +1110,13 @@ EDITLEXER lexRUBY = { SCLEX_RUBY, 63304, L"Ruby", L"rb; ruby", L"", &KeyWords_RU
                     { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
                     //{ SCE_P_DEFAULT, L"Default", L"", L"" },
                     { MULTI_STYLE(SCE_RB_COMMENTLINE,SCE_P_COMMENTBLOCK,0,0), 63127, L"Comment", L"fore:#007F00", L"" },
-                    { SCE_RB_WORD, 63128, L"Keyword", L"fore:#00007F;bold", L"" },
+                    { SCE_RB_WORD, 63128, L"Keyword", L"fore:#00007F; bold", L"" },
                     { SCE_RB_IDENTIFIER, 63129, L"Identifier", L"", L"" },
-                    { SCE_RB_NUMBER, 63130, L"Number", L"fore:#007F7F", L"" },
+                    { SCE_RB_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
                     { SCE_RB_OPERATOR, 63132, L"Operator", L"fore:#B000B0", L"" },
                     { MULTI_STYLE(SCE_RB_STRING,SCE_RB_CHARACTER,SCE_P_STRINGEOL,0), 63131, L"String", L"fore:#FF8000", L"" },
-                    { SCE_RB_CLASSNAME, 63246, L"Class name", L"fore:#0000FF;bold", L"" },
-                    { SCE_RB_DEFNAME, 63247, L"Function name", L"fore:#007F7F;bold", L"" },
+                    { SCE_RB_CLASSNAME, 63246, L"Class name", L"fore:#0000FF; bold", L"" },
+                    { SCE_RB_DEFNAME, 63247, L"Function name", L"fore:#007F7F; bold", L"" },
                     { -1, 00000, L"", L"", L"" } } };
 
 
@@ -1129,8 +1130,8 @@ EDITLEXER lexLUA = { SCLEX_LUA, 63298, L"Lua Script", L"lua", L"", &KeyWords_LUA
                     { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
                     //{ SCE_LUA_DEFAULT, L"Default", L"", L"" },
                     { MULTI_STYLE(SCE_LUA_COMMENT,SCE_LUA_COMMENTLINE,SCE_LUA_COMMENTDOC,0), 63127, L"Comment", L"fore:#007F00", L"" },
-                    { SCE_LUA_NUMBER, 63130, L"Number", L"fore:#007F7F", L"" },
-                    { SCE_LUA_WORD, 63128, L"Keyword", L"fore:#00007F;bold", L"" },
+                    { SCE_LUA_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
+                    { SCE_LUA_WORD, 63128, L"Keyword", L"fore:#00007F; bold", L"" },
                     { MULTI_STYLE(SCE_LUA_STRING,SCE_LUA_STRINGEOL,0,0), 63131, L"String", L"fore:#FF0000", L"" },
                     { SCE_LUA_LITERALSTRING, 63302, L"Literal String", L"fore:#FF0000", L"" },
                     { SCE_LUA_CHARACTER, 63301, L"Character", L"fore:#FF0000", L"" },
@@ -1161,17 +1162,17 @@ EDITLEXER lexBASH = { SCLEX_BASH, 63259, L"Shell Script", L"sh", L"", &KeyWords_
                       { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
                       { SCE_SH_ERROR, 63260, L"Error", L"", L"" },
                       { SCE_SH_COMMENTLINE, 63127, L"Comment", L"fore:#008000", L"" },
-                      { SCE_SH_NUMBER, 63130, L"Number", L"", L"" },
-                      { SCE_SH_WORD, 63128, L"Keyword", L"fore:#FF8000; bold", L"" },
-                      { SCE_SH_STRING, 63211, L"String double quoted", L"fore:#008000", L"" },
-                      { SCE_SH_CHARACTER, 63212, L"String single quoted", L"fore:#008000", L"" },
+                      { SCE_SH_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
+                      { SCE_SH_WORD, 63128, L"Keyword", L"fore:#0000FF", L"" },
+                      { SCE_SH_STRING, 63211, L"String double quoted", L"fore:#008080", L"" },
+                      { SCE_SH_CHARACTER, 63212, L"String single quoted", L"fore:#800080", L"" },
                       { SCE_SH_OPERATOR, 63132, L"Operator", L"", L"" },
                       { SCE_SH_IDENTIFIER, 63129, L"Identifier", L"", L"" },
-                      { SCE_SH_SCALAR, 63268, L"Scalar", L"", L"" },
-                      { SCE_SH_PARAM, 63269, L"Parameter expansion", L"", L"" },
-                      { SCE_SH_BACKTICKS, 63270, L"Back Ticks", L"", L"" },
+                      { SCE_SH_SCALAR, 63268, L"Scalar", L"fore:#808000", L"" },
+                      { SCE_SH_PARAM, 63269, L"Parameter expansion", L"fore:#808000;back:#FFFF99", L"" },
+                      { SCE_SH_BACKTICKS, 63270, L"Back Ticks", L"fore:#FF0080", L"" },
                       { SCE_SH_HERE_DELIM, 63271, L"Here-doc (Delimiter)", L"", L"" },
-                      { SCE_SH_HERE_Q, 63272, L"Here-doc (Single quoted, q)", L"", L"" },
+                      { SCE_SH_HERE_Q, 63272, L"Here-doc (Single quoted, q)", L"fore:#008080", L"" },
                       { -1, 00000, L"", L"", L"" } } };
 
 
@@ -1320,16 +1321,16 @@ KEYWORDLIST KeyWords_AU3 = {
 EDITLEXER lexAU3 = { SCLEX_AU3, 63276, L"AutoIt3", L"au3", L"", &KeyWords_AU3, {
                      { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
                      { MULTI_STYLE(SCE_AU3_COMMENT,SCE_AU3_COMMENTBLOCK,0,0), 63127, L"Comment", L"fore:#008000", L"" },
-                     { SCE_AU3_NUMBER, 63130, L"Number", L"fore:#FF0000", L"" },
-                     { SCE_AU3_FUNCTION, 63277, L"Function", L"fore:#0A246A; bold", L"" },
-                     { SCE_AU3_KEYWORD, 63128, L"Keyword", L"fore:#0A246A; bold", L"" },
+                     { SCE_AU3_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
+                     { SCE_AU3_FUNCTION, 63277, L"Function", L"fore:#0000FF", L"" },
+                     { SCE_AU3_KEYWORD, 63128, L"Keyword", L"fore:#0000FF", L"" },
                      { SCE_AU3_MACRO, 63278, L"Macro", L"fore:#0080FF", L"" },
-                     { SCE_AU3_STRING, 63131, L"String", L"fore:#008000", L"" },
-                     { SCE_AU3_OPERATOR, 63132, L"Operator", L"", L"" },
-                     { SCE_AU3_VARIABLE, 63249, L"Variable", L"", L"" },
-                     { SCE_AU3_SENT, 63279, L"Send Key", L"fore:#0080FF", L"" },
-                     { SCE_AU3_PREPROCESSOR, 63133, L"Preprocessor", L"fore:#808080", L"" },
-                     { SCE_AU3_SPECIAL, 63280, L"Special", L"fore:#808080", L"" },
+                     { SCE_AU3_STRING, 63131, L"String", L"fore:#008080", L"" },
+                     { SCE_AU3_OPERATOR, 63132, L"Operator", L"#C000C0", L"" },
+                     { SCE_AU3_VARIABLE, 63249, L"Variable", L"fore:#808000", L"" },
+                     { SCE_AU3_SENT, 63279, L"Send Key", L"fore:#FF0000", L"" },
+                     { SCE_AU3_PREPROCESSOR, 63133, L"Preprocessor", L"fore:#FF8000", L"" },
+                     { SCE_AU3_SPECIAL, 63280, L"Special", L"fore:#FF8000", L"" },
                      { -1, 00000, L"", L"", L"" } } };
 
 
@@ -1433,7 +1434,7 @@ EDITLEXER lexAHK = { SCLEX_AHK, 63306, L"AutoHotKey Script", L"ahk", L"", &KeyWo
                     { SCE_AHK_SYNOPERATOR, 63308, L"Syntax Operator", L"fore:#B000B0", L"" },
                     { SCE_AHK_EXPOPERATOR, 63309, L"Expression operator", L"fore:#FF0000", L"" },
                     { SCE_AHK_STRING, 63131, L"String", L"fore:#FF8000", L"" },
-                    { SCE_AHK_NUMBER, 63130, L"Number", L"fore:#007F7F", L"" },
+                    { SCE_AHK_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
                     { SCE_AHK_IDENTIFIER, 63129, L"Identifier", L"fore:#C80000", L"" },
                     { SCE_AHK_VARREF, 63310, L"Variable dereferencing", L"fore:#C80000; back:#F0F0FF", L"" },
                     { SCE_AHK_LABEL, 63235, L"Label", L"back:#FFFFD1", L"" },
