@@ -1,9 +1,9 @@
 #labels Featured
 =Notepad2 Modifications - Code Folding Usage Notes=
-(retrieved from [http://code.kliu.org/misc/notepad2/folding.html this page])
+_(as retrieved from [http://code.kliu.org/misc/notepad2/folding.html this page])_
 
 
-==*Keyboard shortcuts*==
+===Keyboard shortcuts===
 
 *`Ctrl+Shift+Alt+F`* — Enables or disables the code folding feature
 
@@ -15,7 +15,7 @@
 
 *`Ctrl+Alt+Left/Right`* — Folds/unfolds the fold point located on the current line and all descendant fold points (all fold points within that fold section)
 
-==*Mouse commands within the fold margin*==
+===Mouse commands within the fold margin===
 
 *`Click (on a fold point)`* — Folds/unfolds the clicked fold point
 
