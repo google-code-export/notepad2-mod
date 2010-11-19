@@ -1,0 +1,23 @@
+#labels Featured
+_Here you can find a few screenshots of the various syntax schemes of Notepad2-mod._
+
+
+
+*C Highlighting/code Folding*
+
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_1.png
+
+
+*NFO ANSI Art*
+
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_2.png
+
+
+*AutoHotKey Highlighting* - *AU3 Highlighting*
+
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_ahk.png http://notepad2-mod.googlecode.com/files/notepad2_screenshot_au3.png
+
+
+*Lua Highlighting* - *Ruby Highlighting*
+
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_lua.png http://notepad2-mod.googlecode.com/files/notepad2_screenshot_rb.png
