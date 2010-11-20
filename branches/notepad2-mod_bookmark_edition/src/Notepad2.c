@@ -3324,6 +3324,7 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
         case SCLEX_PASCAL:
         case SCLEX_INNOSETUP:
           EditEncloseSelection(hwndEdit,L"{",L"}");
+          break;
         case SCLEX_LUA:
           EditEncloseSelection(hwndEdit,L"--[[",L"]]");
       }
