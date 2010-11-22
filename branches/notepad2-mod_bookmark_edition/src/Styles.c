@@ -967,63 +967,51 @@ EDITLEXER lexPS = { SCLEX_POWERSHELL, 63021, L"PowerShell Script", L"ps1; psc1",
 
 KEYWORDLIST KeyWords_NSIS = {
 "!addincludedir !addplugindir !appendfile !cd !define !delfile !echo !else !endif !error "
-"!execute !if !ifdef !ifmacrodef !ifmacrondef !ifndef !include !insertmacro !macro "
-"!macroend !packhdr !system !tempfile !undef !verbose !warning "
-".onguiend .onguiinit .oninit .oninstfailed .oninstsuccess .onmouseoversection "
-".onrebootfailed .onselchange .onuserabort .onverifyinstdir "
-"un.onguiend un.onguiinit un.oninit un.onrebootfailed un.onuninstfailed "
-"un.onuninstsuccess un.onuserabort "
-"abort addbrandingimage addsize allowrootdirinstall allowskipfiles autoclosewindow "
-"bannertrimpath bgfont bggradient brandingtext bringtofront call callinstdll "
-"caption changeui checkbitmap clearerrors completedtext componenttext copyfiles "
-"crccheck createdirectory createfont createshortcut delete deleteinisec deleteinistr "
-"deleteregkey deleteregvalue detailprint detailsbuttontext dirstate dirtext dirvar "
-"dirverify enablewindow enumregkey enumregvalue exch exec execshell execwait "
-"expandenvstrings file filebufsize fileclose fileerrortext fileopen fileread filereadbyte "
-"fileseek filewrite filewritebyte findclose findfirst findnext findwindow flushini "
-"getcurinsttype getcurrentaddress getdlgitem getdllversion getdllversionlocal geterrorlevel "
-"getfiletime getfiletimelocal getfullpathname getfunctionaddress getinstdirerror "
-"getlabeladdress gettempfilename goto hidewindow icon ifabort iferrors iffileexists "
-"ifrebootflag ifsilent initpluginsdir installbuttontext installcolors installdir "
-"installdirregkey instprogressflags insttypegettext insttypesettext intcmp intcmpu intfmt "
-"intop iswindow langstring licensebkcolor licensedata licenseforceselection licenselangstring "
-"licensetext loadlanguagefile lockwindow logset logtext messagebox miscbuttontext name nop "
-"outfile page pop push quit readenvstr readinistr readregdword readregstr reboot regdll "
-"rename requestexecutionlevel reservefile return rmdir searchpath sectiongetflags "
-"sectiongetinsttypes sectiongetsize sectiongettext sectionin sectionsetflags sectionsetinsttypes "
-"sectionsetsize sectionsettext sendmessage setautoclose setbrandingimage setcompress setcompressor "
-"setcompressordictsize setctlcolors setcurinsttype setdatablockoptimize setdatesave setdetailsprint "
-"setdetailsview seterrorlevel seterrors setfileattributes setfont setoutpath setoverwrite "
-"setpluginunload setrebootflag setregview setshellvarcontext setsilent showinstdetails "
-"showuninstdetails showwindow silentinstall silentuninstall sleep spacetexts strcmp strcmps "
-"strcpy strlen subcaption uninstallbuttontext uninstallcaption uninstallicon uninstallsubcaption "
-"uninstalltext uninstpage unregdll var viaddversionkey viproductversion windowicon writeinistr "
-"writeregbin writeregdword writeregexpandstr writeregstr writeuninstaller xpstyle",
-"${nsisdir} $0 $1 $2 $3 $4 $5 $6 $7 $8 $9 $r0 $r1 $r2 $r3 $r4 $r5 $r6 $r7 $r8 $r9 "
-"$instdir $outdir $cmdline $language "
-"$programfiles $programfiles32 $programfiles64 $commonfiles $commonfiles32 $commonfiles64 "
-"$desktop $exedir $exefile $exepath $windir $sysdir $temp $startmenu $smprograms $smstartup "
-"$quicklaunch $documents $sendto $recent $favorites $music $pictures $videos $nethood $fonts "
-"$templates $appdata $localappdata $printhood $internet_cache $cookies $history $profile "
-"$admintools $resources $resources_localized $cdburn_area $hwndparent $pluginsdir "
-"${__date__} ${__file__} ${__function__} ${__global__} ${__line__} ${__pageex__} ${__section__} "
-"${__time__} ${__timestamp__} ${__uninstall__}",
-"oname rebootok nonfatal ifempty nounload silent filesonly short "
-"mb_ok mb_okcancel mb_abortretryignore mb_retrycancel mb_yesno mb_yesnocancel mb_iconexclamation "
-"mb_iconinformation mb_iconquestion mb_iconstop mb_usericon mb_topmost mb_setforeground mb_right "
-"mb_rtlreading mb_defbutton1 mb_defbutton2 mb_defbutton3 mb_defbutton4 idabort idcancel idignore "
-"idno idok idretry idyes sd "
-"current all timeout imgid resizetofit listonly textonly both branding "
-"hkcr hkey_classes_root hklm hkey_local_machine hkcu hkey_current_user hku hkey_users "
-"hkcc hkey_current_config hkdd hkey_dyn_data hkpd hkey_performance_data shctx shell_context silent"
-"left right top bottom true false on off italic underline strike trimleft trimright trimcenter "
-"idd_license idd_dir idd_selcom idd_inst idd_instfiles idd_uninst idd_verify force windows nocustom "
-"customstring componentsonlyoncustom gray none user highest admin lang hide show nevershow normal "
-"silent silentlog auto solid final zlib bzip2 lzma try ifnewer ifdiff lastused manual alwaysoff "
-"normal file_attribute_normal archive file_attribute_archive hidden file_attribute_hidden "
-"offline file_attribute_offline readonly file_attribute_readonly system file_attribute_system "
-"temporary file_attribute_temporary custom license components directory instfiles uninstconfirm 32 64 "
-"enablecancel",
+"!execute !if !ifdef !ifmacrodef !ifmacrondef !ifndef !include !insertmacro !macro !macroend "
+"!packhdr !system !tempfile !undef !verbose !warning .onguiend .onguiinit .oninit .oninstfailed "
+".oninstsuccess .onmouseoversection .onrebootfailed .onselchange .onuserabort .onverifyinstdir "
+"un.onguiend un.onguiinit un.oninit un.onrebootfailed un.onuninstfailed un.onuninstsuccess un.onuserabort "
+"abort addbrandingimage addsize allowrootdirinstall allowskipfiles autoclosewindow bannertrimpath "
+"bgfont bggradient brandingtext bringtofront call callinstdll caption changeui checkbitmap clearerrors "
+"completedtext componenttext copyfiles crccheck createdirectory createfont createshortcut delete "
+"deleteinisec deleteinistr deleteregkey deleteregvalue detailprint detailsbuttontext dirstate dirtext "
+"dirvar dirverify enablewindow enumregkey enumregvalue exch exec execshell execwait expandenvstrings "
+"file filebufsize fileclose fileerrortext fileopen fileread filereadbyte fileseek filewrite filewritebyte "
+"findclose findfirst findnext findwindow flushini getcurinsttype getcurrentaddress getdlgitem "
+"getdllversion getdllversionlocal geterrorlevel getfiletime getfiletimelocal getfullpathname "
+"getfunctionaddress getinstdirerror getlabeladdress gettempfilename goto hidewindow icon ifabort iferrors "
+"iffileexists ifrebootflag ifsilent initpluginsdir installbuttontext installcolors installdir "
+"installdirregkey instprogressflags insttypegettext insttypesettext intcmp intcmpu intfmt intop iswindow "
+"langstring licensebkcolor licensedata licenseforceselection licenselangstring licensetext loadlanguagefile "
+"lockwindow logset logtext messagebox miscbuttontext name nop outfile page pop push quit readenvstr "
+"readinistr readregdword readregstr reboot regdll rename requestexecutionlevel reservefile return rmdir "
+"searchpath sectiongetflags sectiongetinsttypes sectiongetsize sectiongettext sectionin sectionsetflags "
+"sectionsetinsttypes sectionsetsize sectionsettext sendmessage setautoclose setbrandingimage setcompress "
+"setcompressor setcompressordictsize setctlcolors setcurinsttype setdatablockoptimize setdatesave setdetailsprint "
+"setdetailsview seterrorlevel seterrors setfileattributes setfont setoutpath setoverwrite setpluginunload "
+"setrebootflag setregview setshellvarcontext setsilent showinstdetails showuninstdetails showwindow silentinstall "
+"silentuninstall sleep spacetexts strcmp strcmps strcpy strlen subcaption uninstallbuttontext uninstallcaption "
+"uninstallicon uninstallsubcaption uninstalltext uninstpage unregdll var viaddversionkey viproductversion "
+"windowicon writeinistr writeregbin writeregdword writeregexpandstr writeregstr writeuninstaller xpstyle",
+"${nsisdir} $0 $1 $2 $3 $4 $5 $6 $7 $8 $9 $r0 $r1 $r2 $r3 $r4 $r5 $r6 $r7 $r8 $r9 $instdir $outdir $cmdline "
+"$language $programfiles $programfiles32 $programfiles64 $commonfiles $commonfiles32 $commonfiles64 "
+"$desktop $exedir $exefile $exepath $windir $sysdir $temp $startmenu $smprograms $smstartup $quicklaunch "
+"$documents $sendto $recent $favorites $music $pictures $videos $nethood $fonts $templates $appdata "
+"$localappdata $printhood $internet_cache $cookies $history $profile $admintools $resources $resources_localized "
+"$cdburn_area $hwndparent $pluginsdir ${__date__} ${__file__} ${__function__} ${__global__} ${__line__} "
+"${__pageex__} ${__section__} ${__time__} ${__timestamp__} ${__uninstall__}",
+"oname rebootok nonfatal ifempty nounload silent filesonly short mb_ok mb_okcancel mb_abortretryignore "
+"mb_retrycancel mb_yesno mb_yesnocancel mb_iconexclamation mb_iconinformation mb_iconquestion mb_iconstop "
+"mb_usericon mb_topmost mb_setforeground mb_right mb_rtlreading mb_defbutton1 mb_defbutton2 mb_defbutton3 "
+"mb_defbutton4 idabort idcancel idignore idno idok idretry idyes sd current all timeout imgid resizetofit "
+"listonly textonly both branding hkcr hkey_classes_root hklm hkey_local_machine hkcu hkey_current_user hku hkey_users "
+"hkcc hkey_current_config hkdd hkey_dyn_data hkpd hkey_performance_data shctx shell_context silent left right "
+"top bottom true false on off italic underline strike trimleft trimright trimcenter idd_license idd_dir "
+"idd_selcom idd_inst idd_instfiles idd_uninst idd_verify force windows nocustom customstring componentsonlyoncustom "
+"gray none user highest admin lang hide show nevershow normal silent silentlog auto solid final zlib bzip2 lzma try "
+"ifnewer ifdiff lastused manual alwaysoff normal file_attribute_normal archive file_attribute_archive hidden "
+"file_attribute_hidden offline file_attribute_offline readonly file_attribute_readonly system file_attribute_system "
+"temporary file_attribute_temporary custom license components directory instfiles uninstconfirm 32 64 enablecancel",
 "", "", "", "", "", "" };
 
 
@@ -1113,10 +1101,17 @@ EDITLEXER lexRUBY = { SCLEX_RUBY, 63304, L"Ruby", L"rb; ruby", L"", &KeyWords_RU
                     { SCE_RB_WORD, 63128, L"Keyword", L"fore:#00007F", L"" },
                     { SCE_RB_IDENTIFIER, 63129, L"Identifier", L"", L"" },
                     { SCE_RB_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
-                    { SCE_RB_OPERATOR, 63132, L"Operator", L"fore:#B000B0", L"" },
+                    { SCE_RB_OPERATOR, 63132, L"Operator", L"bold", L"" },
                     { MULTI_STYLE(SCE_RB_STRING,SCE_RB_CHARACTER,SCE_P_STRINGEOL,0), 63131, L"String", L"fore:#FF8000", L"" },
                     { SCE_RB_CLASSNAME, 63246, L"Class name", L"fore:#0000FF", L"" },
                     { SCE_RB_DEFNAME, 63247, L"Function name", L"fore:#007F7F", L"" },
+                    { SCE_RB_POD, 63314, L"POD", L"fore:#004000; back:#C0FFC0; eolfilled", L"" },
+                    { SCE_RB_REGEX, 63315, L"Regex", L"fore:#000000; back:#A0FFA0", L"" },
+                    { SCE_RB_SYMBOL, 63316, L"Symbol", L"fore:#C0A030", L"" },
+                    { SCE_RB_MODULE_NAME, 63317, L"Module name", L"fore:#A000A0; bold", L"" },
+                    { SCE_RB_INSTANCE_VAR, 63318, L"Instance Var", L"fore:#B00080", L"" },
+                    { SCE_RB_CLASS_VAR, 63319, L"Class Var", L"fore:#8000B0", L"" },
+                    { SCE_RB_DATASECTION, 63320, L"Data Section", L"fore:#600000; back:#FFF0D8; eolfilled", L"" },
                     { -1, 00000, L"", L"", L"" } } };
 
 
@@ -1425,28 +1420,27 @@ KEYWORDLIST KeyWords_AHK = {
 "", "", "", "", "", "", "", "" };
 
 
-EDITLEXER lexAHK = { SCLEX_AHK, 63306, L"AutoHotKey Script", L"ahk", L"", &KeyWords_AHK, {
+EDITLEXER lexAHK = { SCLEX_AHK, 63305, L"AutoHotKey Script", L"ahk", L"", &KeyWords_AHK, {
                     { STYLE_DEFAULT, 63126, L"Default", L"", L"" },
                     //{ SCE_AHK_DEFAULT, L"Default", L"", L"" },
-                    { SCE_AHK_COMMENTLINE, 63127, L"Comment", L"fore:#008000", L"" },
-                    { SCE_AHK_COMMENTBLOCK, 63305, L"Comment Block", L"fore:#008000", L"" },
-                    { SCE_AHK_ESCAPE, 63307, L"Escape", L"fore:#FF8000", L"" },
-                    { SCE_AHK_SYNOPERATOR, 63308, L"Syntax Operator", L"fore:#B000B0", L"" },
-                    { SCE_AHK_EXPOPERATOR, 63309, L"Expression operator", L"fore:#FF0000", L"" },
+                    { MULTI_STYLE(SCE_AHK_COMMENTLINE,SCE_AHK_COMMENTBLOCK,0,0), 63127, L"Comment", L"fore:#008000", L"" },
+                    { SCE_AHK_ESCAPE, 63306, L"Escape", L"fore:#FF8000", L"" },
+                    { SCE_AHK_SYNOPERATOR, 63307, L"Syntax Operator", L"fore:#B000B0", L"" },
+                    { SCE_AHK_EXPOPERATOR, 63308, L"Expression operator", L"", L"" },
                     { SCE_AHK_STRING, 63131, L"String", L"fore:#FF8000", L"" },
                     { SCE_AHK_NUMBER, 63130, L"Number", L"fore:#008080", L"" },
                     { SCE_AHK_IDENTIFIER, 63129, L"Identifier", L"fore:#C80000", L"" },
-                    { SCE_AHK_VARREF, 63310, L"Variable dereferencing", L"fore:#C80000; back:#F0F0FF", L"" },
+                    { SCE_AHK_VARREF, 63309, L"Variable dereferencing", L"fore:#C80000; back:#F0F0FF", L"" },
                     { SCE_AHK_LABEL, 63235, L"Label", L"back:#FFFFD1", L"" },
-                    { SCE_AHK_WORD_CF, 63311, L"Flow of control", L"fore:#0000C8", L"" },
+                    { SCE_AHK_WORD_CF, 63310, L"Flow of control", L"fore:#0000C8", L"" },
                     { SCE_AHK_WORD_CMD, 63236, L"Command", L"fore:#0000A0", L"" },
                     { SCE_AHK_WORD_FN, 63277, L"Function", L"fore:#0000FF", L"" },
                     { SCE_AHK_WORD_DIR, 63203, L"Directive", L"fore:#008000", L"" },
-                    { SCE_AHK_WORD_KB, 63312, L"Keys & buttons", L"fore:#FF00FF", L"" },
-                    { SCE_AHK_WORD_VAR, 63313, L"Built-in Variables", L"back:#F0F0FF", L"" },
+                    { SCE_AHK_WORD_KB, 63311, L"Keys & buttons", L"fore:#FF00FF", L"" },
+                    { SCE_AHK_WORD_VAR, 63312, L"Built-in Variables", L"back:#F0F0FF", L"" },
                     { SCE_AHK_WORD_SP, 63280, L"Special", L"fore:#FF00FF; italics", L"" },
                     //{ SCE_AHK_WORD_UD, 63106, L"User Defined", L"fore:#800020", L"" },
-                    { SCE_AHK_VARREFKW, 63314, L"Variable keyword", L"fore:#FF00FF; bold; back:#F0F0FF", L"" },
+                    { SCE_AHK_VARREFKW, 63313, L"Variable keyword", L"fore:#FF00FF; bold; back:#F0F0FF", L"" },
                     { SCE_AHK_ERROR, 63260, L"Error", L"back:#FFC0C0", L"" },
                     { -1, 00000, L"", L"", L"" } } };
 
