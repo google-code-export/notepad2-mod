@@ -1,0 +1,9 @@
+#labels Featured
+===Bookmark Edition Changes===
+
+ * Bookmark lines with Ctrl+F2 and jump between bookmarks with F2
+ * Added wildcard search to Find/Replace dialogs
+ * Added help buttons [?] to the Find/Replace dialogs with quick syntax references
+ * Number of selected lines is displayed in the statusbar
+ * Tweaked 'Convert to Title Case'
+ * Find/Replace dialog will automatically be filled with clipboard content first time used
