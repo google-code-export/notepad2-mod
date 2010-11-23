@@ -4430,10 +4430,12 @@ BOOL CALLBACK EditFindReplaceDlgProcW(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM l
 
         case IDC_FINDREGEXP:
           if (IsDlgButtonChecked(hwnd,IDC_FINDREGEXP) == BST_CHECKED)
+          {
             CheckDlgButton(hwnd,IDC_FINDTRANSFORMBS,BST_UNCHECKED);
 #ifdef BOOKMARK_EDITION
             CheckDlgButton(hwnd,IDC_WILDCARDSEARCH,BST_UNCHECKED); // Can not use wildcard search together with regexp
 #endif
+          }
           break;
 
         case IDC_FINDTRANSFORMBS:
