@@ -1,5 +1,5 @@
 #labels Featured
-=Notepad2 Modifications - Code Folding Usage Notes=
+==Notepad2 Modifications - Code Folding Usage Notes==
 _(as retrieved from [http://code.kliu.org/misc/notepad2/folding.html this page])_
 
 
