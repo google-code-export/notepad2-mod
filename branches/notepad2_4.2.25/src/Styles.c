@@ -78,32 +78,37 @@ EDITLEXER lexDefault = { SCLEX_NULL, 63000, L"Default Text", L"txt; text; wtx; l
 
 
 KEYWORDLIST KeyWords_HTML = {
-"!doctype ^aria- ^data- a abbr abstract accept accept-charset accesskey acronym action "
-"address align alink alt and applet archive area aria article aside async audio autocomplete "
-"autofocus axis b background base basefont bb bdo bgcolor big blockquote body boolean border "
-"bordercolor br break button byte canvas caption case catch cellpadding cellspacing center "
-"char charoff charset checkbox checked cite class classid clear code codebase codetype col "
-"colgroup color cols colspan command compact const content contenteditable contextmenu "
-"continue coords data datafld dataformatas datagrid datalist datapagesize datasrc datetime dd "
-"debugger declare default defer del delete details dfn dialog dir disabled div dl do double "
-"draggable dt else em embed enctype enum event eventsource export extends face false fieldset "
-"figcaption figure file final finally float font footer for form formaction formenctype "
-"formmethod formnovalidate formtarget frame frameborder frameset function goto h1 h2 h3 h4 h5 "
-"h6 head header headers height hgroup hidden hr href hreflang hspace html http-equiv i id if "
-"iframe image img implements import in input ins instanceof int interface isindex ismap kbd "
-"keygen label lang language leftmargin legend li link list long longdesc manifest map "
-"marginheight marginwidth mark max maxlength media menu meta meter method min multiple name "
-"native nav new noframes nohref noresize noscript noshade novalidate nowrap null object ol "
-"onblur onchange onclick ondblclick onfocus onkeydown onkeypress onkeyup onload onmessage "
-"onmousedown onmousemove onmouseout onmouseover onmouseup onreset onselect onsubmit onunload "
-"optgroup option output p package param password pattern ping placeholder pre private profile "
-"progress prompt protected public q radio readonly rel required reset return rev reversed "
-"role rows rowspan rp rt ruby rules s samp sandbox scheme scope scoped script scrolling "
-"seamless section select selected shape short size sizes small source span spellcheck src "
-"srcdoc standby start static step strike strong style sub submit summary sup super switch "
-"synchronized tabindex table target tbody td text textarea tfoot th thead this throw throws "
-"time title topmargin tr transient true try tt type typeof u ul usemap valign value valuetype "
-"var version video vlink void volatile vspace wbr while width with xml xmlns",
+"!doctype ^aria- ^data- a abbr abstract accept accept-charset accesskey acronym action address "
+"align alink alt and applet archive area aria article aside async audio autocomplete autofocus "
+"axis b background base basefont bb bdo bgcolor big blockquote body boolean border bordercolor br "
+"break button byte canvas caption case catch cellpadding cellspacing center char charoff charset "
+"checkbox checked cite class classid clear code codebase codetype col colgroup color cols colspan "
+"command compact const content contenteditable contextmenu continue coords data datafld "
+"dataformatas datagrid datalist datapagesize datasrc datetime dd debugger declare default defer "
+"del delete details dfn dialog dir disabled div dl do double draggable dropzone dt else em embed "
+"encoding enctype enum event eventsource export extends face false fieldset figcaption figure "
+"file final finally float font footer for form formaction formenctype formmethod formnovalidate "
+"formtarget frame frameborder frameset function goto h1 h2 h3 h4 h5 h6 head header headers height "
+"hgroup hidden hr href hreflang hspace html http-equiv i id if iframe image img implements import "
+"in input ins instanceof int interface isindex ismap kbd keygen label lang language leftmargin "
+"legend li link list long longdesc manifest map marginheight marginwidth mark max maxlength media "
+"menu meta meter method min multiple name native nav new noframes nohref noresize noscript "
+"noshade novalidate nowrap null object ol onabort onafterprint onbeforeonload onbeforeprint "
+"onblur oncanplay oncanplaythrough onchange onclick oncontextmenu ondblclick ondrag ondragend "
+"ondragenter ondragleave ondragover ondragstart ondrop ondurationchange onemptied onended onerror "
+"onfocus onformchange onforminput onhaschange oninput oninvalid onkeydown onkeypress onkeyup "
+"onload onloadeddata onloadedmetadata onloadstart onmessage onmousedown onmousemove onmouseout "
+"onmouseover onmouseup onmousewheel onoffline ononline onpagehide onpageshow onpause onplay "
+"onplaying onpopstate onprogress onratechange onreadystatechange onredo onreset onresize onscroll "
+"onseeked onseeking onselect onstalled onstorage onsubmit onsuspend ontimeupdate onundo onunload "
+"onvolumechange onwaiting optgroup option output p package param password pattern ping "
+"placeholder pre private profile progress prompt protected public q radio readonly rel required "
+"reset return rev reversed role rows rowspan rp rt ruby rules s samp sandbox scheme scope scoped "
+"script scrolling seamless section select selected shape short size sizes small source span "
+"spellcheck src srcdoc standby start static step strike strong style sub submit summary sup super "
+"switch synchronized tabindex table target tbody td text textarea tfoot th thead this throw "
+"throws time title topmargin tr transient true try tt type typeof u ul usemap valign value "
+"valuetype var version video vlink void volatile vspace wbr while width with xml xmlns xmp",
 "and begin case call continue do each else elseif end erase error event exit false for function get "
 "gosub goto if implement in load loop lset me mid new next not nothing on or property raiseevent "
 "rem resume return rset select set stop sub then to true unload until wend while with withevents "
@@ -3040,7 +3045,7 @@ void Style_SetStyles(HWND hwnd,int iStyle,LPCWSTR lpszStyle)
 
   // Font
   if (Style_StrGetFont(lpszStyle,tch,COUNTOF(tch))) {
-    char mch[256] = "Consolas";
+    char mch[256] = "Lucida Console";
     if (fIsConsolasAvailable || lstrcmpi(tch,L"Consolas"))
       WideCharToMultiByte(CP_ACP,0,tch,-1,mch,COUNTOF(mch),NULL,NULL);
     SendMessage(hwnd,SCI_STYLESETFONT,iStyle,(LPARAM)mch);

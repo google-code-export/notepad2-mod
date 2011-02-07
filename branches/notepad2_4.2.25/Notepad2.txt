@@ -37,7 +37,7 @@ Features
   - Mostly adjustable
 
 
-New in Version 4.2.25-rc1 (released February 01, 2011)
+New in Version 4.2.25-rc2 (released February 03, 2011)
 
   - "Align Lines" with several options (Alt+J)
   - "Modify Lines" supports several variables to insert numbers (Alt+M)
@@ -65,7 +65,7 @@ New in Version 4.2.25-rc1 (released February 01, 2011)
   - Support a few more file variables (see FAQ on my website)
   - Configure whether backspace should reformat indenting whitespace
   - Hotkeys (Shift+)F3, Alt+F3 and F4 work in find and replace dialogs
-  - Disallow suppression of text not found message
+  - Ini-options to block suppression of notification messages
   - Simplified appearance of word wrap settings dialog
   - Muted a few unused hotkeys that inserted control characters
   - Dropped "Select To Next" (F2) and "Select To Previous" (Shift+F2)

@@ -34,7 +34,7 @@
 #include "dlapi.h"
 #include "dialogs.h"
 #include "resource.h"
-#include "Version.h"
+#include "version.h"
 
 
 extern HWND  hwndMain;
@@ -2298,8 +2298,11 @@ INT_PTR InfoBox(int iType,LPCWSTR lpstrSetting,int uidMessage,...)
   int idDlg = IDD_INFOBOX;
   INFOBOX ib;
   WCHAR wchFormat[512];
+  int iMode;
 
-  if (lstrlen(lpstrSetting) > 0 && IniGetInt(L"Suppressed Messages",lpstrSetting,0))
+  iMode = IniGetInt(L"Suppressed Messages",lpstrSetting,0);
+
+  if (lstrlen(lpstrSetting) > 0 && iMode == 1)
     return (iType == MBYESNO) ? IDYES : IDOK;
 
   if (!GetString(uidMessage,wchFormat,COUNTOF(wchFormat)))
@@ -2308,7 +2311,7 @@ INT_PTR InfoBox(int iType,LPCWSTR lpstrSetting,int uidMessage,...)
   ib.lpstrMessage = LocalAlloc(LPTR,1024 * sizeof(WCHAR));
   wvsprintf(ib.lpstrMessage,wchFormat,(LPVOID)((PUINT_PTR)&uidMessage + 1));
   ib.lpstrSetting = (LPWSTR)lpstrSetting;
-  ib.bDisableCheckBox = (lstrlen(szIniFile) == 0 || lstrlen(lpstrSetting) == 0) ? TRUE : FALSE;
+  ib.bDisableCheckBox = (lstrlen(szIniFile) == 0 || lstrlen(lpstrSetting) == 0 || iMode == 2) ? TRUE : FALSE;
 
   if (iType == MBYESNO)
     idDlg = IDD_INFOBOX2;
