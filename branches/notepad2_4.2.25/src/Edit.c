@@ -5535,3 +5535,1019 @@ INT_PTR CALLBACK EditLinenumDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lPa
           int iNewLine = (int)GetDlgItemInt(hwnd,IDC_LINENUM,&fTranslated,FALSE);
           int iMaxLine = (int)SendMessage(hwndEdit,SCI_GETLINECOUNT,0,0);
 
+          if (SendDlgItemMessage(hwnd,IDC_COLNUM,WM_GETTEXTLENGTH,0,0) > 0)
+            iNewCol = GetDlgItemInt(hwnd,IDC_COLNUM,&fTranslated2,FALSE);
+          else {
+            iNewCol = 1;
+            fTranslated2 = TRUE;
+          }
+
+          if (!fTranslated || !fTranslated2)
+          {
+            PostMessage(hwnd,WM_NEXTDLGCTL,(WPARAM)(GetDlgItem(hwnd,(!fTranslated) ? IDC_LINENUM : IDC_COLNUM)),1);
+            return TRUE;
+          }
+
+          if (iNewLine > 0 && iNewLine <= iMaxLine && iNewCol > 0)
+          {
+            //int iNewPos  = SendMessage(hwndEdit,SCI_POSITIONFROMLINE,(WPARAM)iNewLine-1,0);
+            //int iLineEndPos = SendMessage(hwndEdit,SCI_GETLINEENDPOSITION,(WPARAM)iNewLine-1,0);
+
+            //while (iNewCol-1 > SendMessage(hwndEdit,SCI_GETCOLUMN,(WPARAM)iNewPos,0))
+            //{
+            //  if (iNewPos >= iLineEndPos)
+            //    break;
+
+            //  iNewPos = SendMessage(hwndEdit,SCI_POSITIONAFTER,(WPARAM)iNewPos,0);
+            //}
+
+            //iNewPos = min(iNewPos,iLineEndPos);
+            //SendMessage(hwndEdit,SCI_GOTOPOS,(WPARAM)iNewPos,0);
+            //SendMessage(hwndEdit,SCI_CHOOSECARETX,0,0);
+
+            EditJumpTo(hwndEdit,iNewLine,iNewCol);
+
+            EndDialog(hwnd,IDOK);
+          }
+
+          else
+            PostMessage(hwnd,WM_NEXTDLGCTL,(WPARAM)(GetDlgItem(hwnd,(!(iNewLine > 0 && iNewLine <= iMaxLine)) ? IDC_LINENUM : IDC_COLNUM)),1);
+
+          }
+          break;
+
+
+        case IDCANCEL:
+          EndDialog(hwnd,IDCANCEL);
+          break;
+
+      }
+
+      return TRUE;
+
+  }
+
+  return FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  EditLinenumDlg()
+//
+BOOL EditLinenumDlg(HWND hwnd)
+{
+
+  if (IDOK == ThemedDialogBoxParam(g_hInstance,MAKEINTRESOURCE(IDD_LINENUM),
+                             GetParent(hwnd),EditLinenumDlgProc,(LPARAM)hwnd))
+    return TRUE;
+
+  else
+    return FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  EditModifyLinesDlg()
+//
+//  Controls: 100 Input
+//            101 Input
+//
+typedef struct _modlinesdata {
+  LPWSTR pwsz1;
+  LPWSTR pwsz2;
+} MODLINESDATA, *PMODLINESDATA;
+
+
+INT_PTR CALLBACK EditModifyLinesDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
+{
+  static PMODLINESDATA pdata;
+  switch(umsg)
+  {
+    case WM_INITDIALOG:
+      {
+        pdata = (PMODLINESDATA)lParam;
+        SetDlgItemTextW(hwnd,100,pdata->pwsz1);
+        SendDlgItemMessage(hwnd,100,EM_LIMITTEXT,255,0);
+        SetDlgItemTextW(hwnd,101,pdata->pwsz2);
+        SendDlgItemMessage(hwnd,101,EM_LIMITTEXT,255,0);
+        CenterDlgInParent(hwnd);
+      }
+      return TRUE;
+    case WM_COMMAND:
+      switch(LOWORD(wParam))
+      {
+        case IDOK: {
+            GetDlgItemTextW(hwnd,100,pdata->pwsz1,256);
+            GetDlgItemTextW(hwnd,101,pdata->pwsz2,256);
+            EndDialog(hwnd,IDOK);
+          }
+          break;
+        case IDCANCEL:
+          EndDialog(hwnd,IDCANCEL);
+          break;
+      }
+      return TRUE;
+  }
+  return FALSE;
+}
+
+
+//=============================================================================
+//
+//  EditModifyLinesDlg()
+//
+BOOL EditModifyLinesDlg(HWND hwnd,LPWSTR pwsz1,LPWSTR pwsz2)
+{
+
+  INT_PTR iResult;
+  MODLINESDATA data = { pwsz1, pwsz2 };
+
+  iResult = ThemedDialogBoxParam(
+              g_hInstance,
+              MAKEINTRESOURCEW(IDD_MODIFYLINES),
+              hwnd,
+              EditModifyLinesDlgProc,
+              (LPARAM)&data);
+
+  return (iResult == IDOK) ? TRUE : FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  EditAlignDlgProc()
+//
+//  Controls: 100 Radio Button
+//            101 Radio Button
+//            102 Radio Button
+//            103 Radio Button
+//            104 Radio Button
+//
+INT_PTR CALLBACK EditAlignDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
+{
+  static int *piAlignMode;
+  switch(umsg)
+  {
+    case WM_INITDIALOG:
+      {
+        piAlignMode = (int*)lParam;
+        CheckRadioButton(hwnd,100,104,*piAlignMode+100);
+        CenterDlgInParent(hwnd);
+      }
+      return TRUE;
+    case WM_COMMAND:
+      switch(LOWORD(wParam))
+      {
+        case IDOK: {
+            *piAlignMode = 0;
+            if (IsDlgButtonChecked(hwnd,100) == BST_CHECKED)
+              *piAlignMode = ALIGN_LEFT;
+            else if (IsDlgButtonChecked(hwnd,101) == BST_CHECKED)
+              *piAlignMode = ALIGN_RIGHT;
+            else if (IsDlgButtonChecked(hwnd,102) == BST_CHECKED)
+              *piAlignMode = ALIGN_CENTER;
+            else if (IsDlgButtonChecked(hwnd,103) == BST_CHECKED)
+              *piAlignMode = ALIGN_JUSTIFY;
+            else if (IsDlgButtonChecked(hwnd,104) == BST_CHECKED)
+              *piAlignMode = ALIGN_JUSTIFY_EX;
+            EndDialog(hwnd,IDOK);
+          }
+          break;
+        case IDCANCEL:
+          EndDialog(hwnd,IDCANCEL);
+          break;
+      }
+      return TRUE;
+  }
+  return FALSE;
+}
+
+
+//=============================================================================
+//
+//  EditAlignDlg()
+//
+BOOL EditAlignDlg(HWND hwnd,int *piAlignMode)
+{
+
+  INT_PTR iResult;
+
+  iResult = ThemedDialogBoxParam(
+              g_hInstance,
+              MAKEINTRESOURCEW(IDD_ALIGN),
+              hwnd,
+              EditAlignDlgProc,
+              (LPARAM)piAlignMode);
+
+  return (iResult == IDOK) ? TRUE : FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  EditEncloseSelectionDlgProc()
+//
+//  Controls: 100 Input
+//            101 Input
+//
+typedef struct _encloseselectiondata {
+  LPWSTR pwsz1;
+  LPWSTR pwsz2;
+} ENCLOSESELDATA, *PENCLOSESELDATA;
+
+
+INT_PTR CALLBACK EditEncloseSelectionDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
+{
+  static PENCLOSESELDATA pdata;
+  switch(umsg)
+  {
+    case WM_INITDIALOG:
+      {
+        pdata = (PENCLOSESELDATA)lParam;
+        SendDlgItemMessage(hwnd,100,EM_LIMITTEXT,255,0);
+        SetDlgItemTextW(hwnd,100,pdata->pwsz1);
+        SendDlgItemMessage(hwnd,101,EM_LIMITTEXT,255,0);
+        SetDlgItemTextW(hwnd,101,pdata->pwsz2);
+        CenterDlgInParent(hwnd);
+      }
+      return TRUE;
+    case WM_COMMAND:
+      switch(LOWORD(wParam))
+      {
+        case IDOK: {
+            GetDlgItemTextW(hwnd,100,pdata->pwsz1,256);
+            GetDlgItemTextW(hwnd,101,pdata->pwsz2,256);
+            EndDialog(hwnd,IDOK);
+          }
+          break;
+        case IDCANCEL:
+          EndDialog(hwnd,IDCANCEL);
+          break;
+      }
+      return TRUE;
+  }
+  return FALSE;
+}
+
+
+//=============================================================================
+//
+//  EditEncloseSelectionDlg()
+//
+BOOL EditEncloseSelectionDlg(HWND hwnd,LPWSTR pwszOpen,LPWSTR pwszClose)
+{
+
+  INT_PTR iResult;
+  ENCLOSESELDATA data = { pwszOpen, pwszClose };
+
+  iResult = ThemedDialogBoxParam(
+              g_hInstance,
+              MAKEINTRESOURCEW(IDD_ENCLOSESELECTION),
+              hwnd,
+              EditEncloseSelectionDlgProc,
+              (LPARAM)&data);
+
+  return (iResult == IDOK) ? TRUE : FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  EditInsertTagDlgProc()
+//
+//  Controls: 100 Input
+//            101 Input
+//
+typedef struct _tagsdata {
+  LPWSTR pwsz1;
+  LPWSTR pwsz2;
+} TAGSDATA, *PTAGSDATA;
+
+
+INT_PTR CALLBACK EditInsertTagDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
+{
+  static PTAGSDATA pdata;
+  switch(umsg)
+  {
+    case WM_INITDIALOG:
+      {
+        pdata = (PTAGSDATA)lParam;
+        SendDlgItemMessage(hwnd,100,EM_LIMITTEXT,254,0);
+        SetDlgItemTextW(hwnd,100,L"<tag>");
+        SendDlgItemMessage(hwnd,101,EM_LIMITTEXT,255,0);
+        SetDlgItemTextW(hwnd,101,L"</tag>");
+        SetFocus(GetDlgItem(hwnd,100));
+        PostMessage(GetDlgItem(hwnd,100),EM_SETSEL,1,4);
+        CenterDlgInParent(hwnd);
+      }
+      return FALSE;
+    case WM_COMMAND:
+      switch(LOWORD(wParam))
+      {
+        case 100: {
+            if (HIWORD(wParam) == EN_CHANGE) {
+
+              WCHAR wchBuf[256];
+              WCHAR wchIns[256] = L"</";
+              int  cchIns = 2;
+              BOOL bClear = TRUE;
+
+              GetDlgItemTextW(hwnd,100,wchBuf,256);
+              if (lstrlen(wchBuf) >= 3) {
+
+                if (wchBuf[0] == L'<') {
+
+                  const WCHAR* pwCur = &wchBuf[1];
+
+                  while (
+                    *pwCur &&
+                    *pwCur != L'<' &&
+                    *pwCur != L'>' &&
+                    *pwCur != L' ' &&
+                    *pwCur != L'\t' &&
+                    (StrChr(L":_-.",*pwCur) || IsCharAlphaNumericW(*pwCur)))
+
+                      wchIns[cchIns++] = *pwCur++;
+
+                  while (
+                    *pwCur &&
+                    *pwCur != L'>')
+
+                      pwCur++;
+
+                  if (*pwCur == L'>' && *(pwCur-1) != L'/') {
+                    wchIns[cchIns++] = L'>';
+                    wchIns[cchIns] = L'\0';
+
+                    if (cchIns > 3 &&
+                      lstrcmpi(wchIns,L"</base>") &&
+                      lstrcmpi(wchIns,L"</bgsound>") &&
+                      lstrcmpi(wchIns,L"</br>") &&
+                      lstrcmpi(wchIns,L"</embed>") &&
+                      lstrcmpi(wchIns,L"</hr>") &&
+                      lstrcmpi(wchIns,L"</img>") &&
+                      lstrcmpi(wchIns,L"</input>") &&
+                      lstrcmpi(wchIns,L"</link>") &&
+                      lstrcmpi(wchIns,L"</meta>")) {
+
+                        SetDlgItemTextW(hwnd,101,wchIns);
+                        bClear = FALSE;
+                    }
+                  }
+                }
+              }
+              if (bClear)
+                SetDlgItemTextW(hwnd,101,L"");
+            }
+          }
+          break;
+        case IDOK: {
+            GetDlgItemTextW(hwnd,100,pdata->pwsz1,256);
+            GetDlgItemTextW(hwnd,101,pdata->pwsz2,256);
+            EndDialog(hwnd,IDOK);
+          }
+          break;
+        case IDCANCEL:
+          EndDialog(hwnd,IDCANCEL);
+          break;
+      }
+      return TRUE;
+  }
+  return FALSE;
+}
+
+
+//=============================================================================
+//
+//  EditInsertTagDlg()
+//
+BOOL EditInsertTagDlg(HWND hwnd,LPWSTR pwszOpen,LPWSTR pwszClose)
+{
+
+  INT_PTR iResult;
+  TAGSDATA data = { pwszOpen, pwszClose };
+
+  iResult = ThemedDialogBoxParam(
+              g_hInstance,
+              MAKEINTRESOURCEW(IDD_INSERTTAG),
+              hwnd,
+              EditInsertTagDlgProc,
+              (LPARAM)&data);
+
+  return (iResult == IDOK) ? TRUE : FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  EditSortDlgProc()
+//
+//  Controls: 100 Radio Button
+//            101 Radio Button
+//            102 Radio Button
+//            103 Check Box
+//            104 Check Box
+//
+INT_PTR CALLBACK EditSortDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
+{
+  static int *piSortFlags;
+  static BOOL bEnableLogicalSort;
+
+  switch(umsg)
+  {
+    case WM_INITDIALOG:
+      {
+        piSortFlags = (int*)lParam;
+        if (*piSortFlags & SORT_DESCENDING)
+          CheckRadioButton(hwnd,100,102,101);
+        else if (*piSortFlags & SORT_SHUFFLE) {
+          CheckRadioButton(hwnd,100,102,102);
+          EnableWindow(GetDlgItem(hwnd,103),FALSE);
+          EnableWindow(GetDlgItem(hwnd,104),FALSE);
+        }
+        else
+          CheckRadioButton(hwnd,100,102,100);
+        if (*piSortFlags & SORT_UNIQ)
+          CheckDlgButton(hwnd,103,BST_CHECKED);
+        if (GetProcAddress(GetModuleHandle(L"shlwapi"),"StrCmpLogicalW")) {
+          if (*piSortFlags & SORT_LOGICAL)
+            CheckDlgButton(hwnd,104,BST_CHECKED);
+          bEnableLogicalSort = TRUE;
+        }
+        else {
+          EnableWindow(GetDlgItem(hwnd,104),FALSE);
+          bEnableLogicalSort = FALSE;
+        }
+        CenterDlgInParent(hwnd);
+      }
+      return TRUE;
+    case WM_COMMAND:
+      switch(LOWORD(wParam))
+      {
+        case IDOK: {
+            *piSortFlags = 0;
+            if (IsDlgButtonChecked(hwnd,101) == BST_CHECKED)
+              *piSortFlags |= SORT_DESCENDING;
+            if (IsDlgButtonChecked(hwnd,102) == BST_CHECKED)
+              *piSortFlags |= SORT_SHUFFLE;
+            if (IsDlgButtonChecked(hwnd,103) == BST_CHECKED)
+              *piSortFlags |= SORT_UNIQ;
+            if (IsDlgButtonChecked(hwnd,104) == BST_CHECKED)
+              *piSortFlags |= SORT_LOGICAL;
+            EndDialog(hwnd,IDOK);
+          }
+          break;
+        case IDCANCEL:
+          EndDialog(hwnd,IDCANCEL);
+          break;
+        case 100:
+        case 101:
+          EnableWindow(GetDlgItem(hwnd,103),TRUE);
+          EnableWindow(GetDlgItem(hwnd,104),bEnableLogicalSort);
+          break;
+        case 102:
+          EnableWindow(GetDlgItem(hwnd,103),FALSE);
+          EnableWindow(GetDlgItem(hwnd,104),FALSE);
+          break;
+      }
+      return TRUE;
+  }
+  return FALSE;
+}
+
+
+//=============================================================================
+//
+//  EditSortDlg()
+//
+BOOL EditSortDlg(HWND hwnd,int *piSortFlags)
+{
+
+  INT_PTR iResult;
+
+  iResult = ThemedDialogBoxParam(
+              g_hInstance,
+              MAKEINTRESOURCEW(IDD_SORT),
+              hwnd,
+              EditSortDlgProc,
+              (LPARAM)piSortFlags);
+
+  return (iResult == IDOK) ? TRUE : FALSE;
+
+}
+
+
+//=============================================================================
+//
+//  FileVars_Init()
+//
+extern BOOL bNoEncodingTags;
+extern int fNoFileVariables;
+
+BOOL FileVars_Init(char *lpData,DWORD cbData,LPFILEVARS lpfv) {
+
+  int i;
+  char tch[512];
+  BOOL bDisableFileVariables = FALSE;
+
+  ZeroMemory(lpfv,sizeof(FILEVARS));
+  if ((fNoFileVariables && bNoEncodingTags) || !lpData || !cbData)
+    return(TRUE);
+
+  lstrcpynA(tch,lpData,min(cbData+1,COUNTOF(tch)));
+
+  if (!fNoFileVariables) {
+    if (FileVars_ParseInt(tch,"enable-local-variables",&i) && (!i))
+      bDisableFileVariables = TRUE;
+
+    if (!bDisableFileVariables) {
+
+      if (FileVars_ParseInt(tch,"tab-width",&i)) {
+        lpfv->iTabWidth = max(min(i,256),1);
+        lpfv->mask |= FV_TABWIDTH;
+      }
+
+      if (FileVars_ParseInt(tch,"c-basic-indent",&i)) {
+        lpfv->iIndentWidth = max(min(i,256),0);
+        lpfv->mask |= FV_INDENTWIDTH;
+      }
+
+      if (FileVars_ParseInt(tch,"indent-tabs-mode",&i)) {
+        lpfv->bTabsAsSpaces = (i) ? FALSE : TRUE;
+        lpfv->mask |= FV_TABSASSPACES;
+      }
+
+      if (FileVars_ParseInt(tch,"c-tab-always-indent",&i)) {
+        lpfv->bTabIndents = (i) ? TRUE : FALSE;
+        lpfv->mask |= FV_TABINDENTS;
+      }
+
+      if (FileVars_ParseInt(tch,"truncate-lines",&i)) {
+        lpfv->fWordWrap = (i) ? FALSE : TRUE;
+        lpfv->mask |= FV_WORDWRAP;
+      }
+
+      if (FileVars_ParseInt(tch,"fill-column",&i)) {
+        lpfv->iLongLinesLimit = max(min(i,4096),0);
+        lpfv->mask |= FV_LONGLINESLIMIT;
+      }
+    }
+  }
+
+  if (!IsUTF8Signature(lpData) && !bNoEncodingTags && !bDisableFileVariables) {
+
+    if (FileVars_ParseStr(tch,"encoding",lpfv->tchEncoding,COUNTOF(lpfv->tchEncoding)))
+      lpfv->mask |= FV_ENCODING;
+    else if (FileVars_ParseStr(tch,"charset",lpfv->tchEncoding,COUNTOF(lpfv->tchEncoding)))
+      lpfv->mask |= FV_ENCODING;
+    else if (FileVars_ParseStr(tch,"coding",lpfv->tchEncoding,COUNTOF(lpfv->tchEncoding)))
+      lpfv->mask |= FV_ENCODING;
+  }
+
+  if (!fNoFileVariables && !bDisableFileVariables) {
+    if (FileVars_ParseStr(tch,"mode",lpfv->tchMode,COUNTOF(lpfv->tchMode)))
+      lpfv->mask |= FV_MODE;
+  }
+
+  if (lpfv->mask == 0 && cbData > COUNTOF(tch)) {
+
+    lstrcpynA(tch,lpData+cbData-COUNTOF(tch)+1,COUNTOF(tch));
+
+    if (!fNoFileVariables) {
+      if (FileVars_ParseInt(tch,"enable-local-variables",&i) && (!i))
+        bDisableFileVariables = TRUE;
+
+      if (!bDisableFileVariables) {
+
+        if (FileVars_ParseInt(tch,"tab-width",&i)) {
+          lpfv->iTabWidth = max(min(i,256),1);
+          lpfv->mask |= FV_TABWIDTH;
+        }
+
+        if (FileVars_ParseInt(tch,"c-basic-indent",&i)) {
+          lpfv->iIndentWidth = max(min(i,256),0);
+          lpfv->mask |= FV_INDENTWIDTH;
+        }
+
+        if (FileVars_ParseInt(tch,"indent-tabs-mode",&i)) {
+          lpfv->bTabsAsSpaces = (i) ? FALSE : TRUE;
+          lpfv->mask |= FV_TABSASSPACES;
+        }
+
+        if (FileVars_ParseInt(tch,"c-tab-always-indent",&i)) {
+          lpfv->bTabIndents = (i) ? TRUE : FALSE;
+          lpfv->mask |= FV_TABINDENTS;
+        }
+
+        if (FileVars_ParseInt(tch,"truncate-lines",&i)) {
+          lpfv->fWordWrap = (i) ? FALSE : TRUE;
+          lpfv->mask |= FV_WORDWRAP;
+        }
+
+        if (FileVars_ParseInt(tch,"fill-column",&i)) {
+          lpfv->iLongLinesLimit = max(min(i,4096),0);
+          lpfv->mask |= FV_LONGLINESLIMIT;
+        }
+      }
+    }
+
+    if (!IsUTF8Signature(lpData) && !bNoEncodingTags && !bDisableFileVariables) {
+
+      if (FileVars_ParseStr(tch,"encoding",lpfv->tchEncoding,COUNTOF(lpfv->tchEncoding)))
+        lpfv->mask |= FV_ENCODING;
+      else if (FileVars_ParseStr(tch,"charset",lpfv->tchEncoding,COUNTOF(lpfv->tchEncoding)))
+        lpfv->mask |= FV_ENCODING;
+      else if (FileVars_ParseStr(tch,"coding",lpfv->tchEncoding,COUNTOF(lpfv->tchEncoding)))
+        lpfv->mask |= FV_ENCODING;
+    }
+
+    if (!fNoFileVariables && !bDisableFileVariables) {
+      if (FileVars_ParseStr(tch,"mode",lpfv->tchMode,COUNTOF(lpfv->tchMode)))
+        lpfv->mask |= FV_MODE;
+    }
+  }
+
+  if (lpfv->mask & FV_ENCODING)
+    lpfv->iEncoding = Encoding_MatchA(lpfv->tchEncoding);
+
+  return(TRUE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_Apply()
+//
+extern int iTabWidth;
+extern int iTabWidthG;
+extern int iIndentWidth;
+extern int iIndentWidthG;
+extern BOOL bTabsAsSpaces;
+extern BOOL bTabsAsSpacesG;
+extern BOOL bTabIndents;
+extern BOOL bTabIndentsG;
+extern int fWordWrap;
+extern int fWordWrapG;
+extern int iWordWrapMode;
+extern int iLongLinesLimit;
+extern int iLongLinesLimitG;
+extern int iWrapCol;
+
+BOOL FileVars_Apply(HWND hwnd,LPFILEVARS lpfv) {
+
+  if (lpfv->mask & FV_TABWIDTH)
+    iTabWidth = lpfv->iTabWidth;
+  else
+    iTabWidth = iTabWidthG;
+  SendMessage(hwnd,SCI_SETTABWIDTH,iTabWidth,0);
+
+  if (lpfv->mask & FV_INDENTWIDTH)
+    iIndentWidth = lpfv->iIndentWidth;
+  else if (lpfv->mask & FV_TABWIDTH)
+    iIndentWidth = 0;
+  else
+    iIndentWidth = iIndentWidthG;
+  SendMessage(hwnd,SCI_SETINDENT,iIndentWidth,0);
+
+  if (lpfv->mask & FV_TABSASSPACES)
+    bTabsAsSpaces = lpfv->bTabsAsSpaces;
+  else
+    bTabsAsSpaces = bTabsAsSpacesG;
+  SendMessage(hwnd,SCI_SETUSETABS,!bTabsAsSpaces,0);
+
+  if (lpfv->mask & FV_TABINDENTS)
+    bTabIndents = lpfv->bTabIndents;
+  else
+    bTabIndents = bTabIndentsG;
+  SendMessage(hwndEdit,SCI_SETTABINDENTS,bTabIndents,0);
+
+  if (lpfv->mask & FV_WORDWRAP)
+    fWordWrap = lpfv->fWordWrap;
+  else
+    fWordWrap = fWordWrapG;
+  if (!fWordWrap)
+    SendMessage(hwndEdit,SCI_SETWRAPMODE,SC_WRAP_NONE,0);
+  else
+    SendMessage(hwndEdit,SCI_SETWRAPMODE,(iWordWrapMode == 0) ? SC_WRAP_WORD : SC_WRAP_CHAR,0);
+
+  if (lpfv->mask & FV_LONGLINESLIMIT)
+    iLongLinesLimit = lpfv->iLongLinesLimit;
+  else
+    iLongLinesLimit = iLongLinesLimitG;
+  SendMessage(hwnd,SCI_SETEDGECOLUMN,iLongLinesLimit,0);
+
+  iWrapCol = 0;
+
+  return(TRUE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_ParseInt()
+//
+BOOL FileVars_ParseInt(char* pszData,char* pszName,int* piValue) {
+
+  char tch[32];
+  char *pvStart = pszData;
+  char chPrev;
+  char *pvEnd;
+  int  itok;
+
+  while (pvStart = StrStrIA(pvStart,pszName)) {
+    chPrev = (pvStart > pszData) ? *(pvStart-1) : 0;
+    if (!IsCharAlphaNumericA(chPrev) && chPrev != '-' && chPrev != '_') {
+      pvStart += lstrlenA(pszName);
+      while (*pvStart == ' ')
+        pvStart++;
+      if (*pvStart == ':' || *pvStart == '=')
+        break;
+    }
+    else
+      pvStart += lstrlenA(pszName);
+  }
+
+  if (pvStart) {
+
+    while (*pvStart && StrChrIA(":=\"' \t",*pvStart))
+      pvStart++;
+
+    lstrcpynA(tch,pvStart,COUNTOF(tch));
+
+    pvEnd = tch;
+    while (*pvEnd && IsCharAlphaNumericA(*pvEnd))
+      pvEnd++;
+    *pvEnd = 0;
+    StrTrimA(tch," \t:=\"'");
+
+    itok = sscanf(tch,"%i",piValue);
+    if (itok == 1)
+      return(TRUE);
+
+    if (tch[0] == 't') {
+      *piValue = 1;
+      return(TRUE);
+    }
+
+    if (tch[0] == 'n' || tch[0] == 'f') {
+      *piValue = 0;
+      return(TRUE);
+    }
+  }
+  return(FALSE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_ParseStr()
+//
+BOOL FileVars_ParseStr(char* pszData,char* pszName,char* pszValue,int cchValue) {
+
+  char tch[32];
+  char *pvStart = pszData;
+  char chPrev;
+  char *pvEnd;
+  BOOL bQuoted = FALSE;
+
+  while (pvStart = StrStrIA(pvStart,pszName)) {
+    chPrev = (pvStart > pszData) ? *(pvStart-1) : 0;
+    if (!IsCharAlphaNumericA(chPrev) && chPrev != '-' && chPrev != '_') {
+      pvStart += lstrlenA(pszName);
+      while (*pvStart == ' ')
+        pvStart++;
+      if (*pvStart == ':' || *pvStart == '=')
+        break;
+    }
+    else
+      pvStart += lstrlenA(pszName);
+  }
+
+  if (pvStart) {
+
+    while (*pvStart && StrChrIA(":=\"' \t",*pvStart)) {
+      if (*pvStart == '\'' || *pvStart == '"')
+        bQuoted = TRUE;
+      pvStart++;
+    }
+    lstrcpynA(tch,pvStart,COUNTOF(tch));
+
+    pvEnd = tch;
+    while (*pvEnd && (IsCharAlphaNumericA(*pvEnd) || StrChrIA("+-/_",*pvEnd) || (bQuoted && *pvEnd == ' ')))
+      pvEnd++;
+    *pvEnd = 0;
+    StrTrimA(tch," \t:=\"'");
+
+    lstrcpynA(pszValue,tch,cchValue);
+    return(TRUE);
+  }
+  return(FALSE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_IsUTF8()
+//
+BOOL FileVars_IsUTF8(LPFILEVARS lpfv) {
+  if (lpfv->mask & FV_ENCODING) {
+    if (lstrcmpiA(lpfv->tchEncoding,"utf-8") == 0 ||
+        lstrcmpiA(lpfv->tchEncoding,"utf8") == 0)
+      return(TRUE);
+  }
+  return(FALSE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_IsNonUTF8()
+//
+BOOL FileVars_IsNonUTF8(LPFILEVARS lpfv) {
+  if (lpfv->mask & FV_ENCODING) {
+    if (lstrlenA(lpfv->tchEncoding) &&
+        lstrcmpiA(lpfv->tchEncoding,"utf-8") != 0 &&
+        lstrcmpiA(lpfv->tchEncoding,"utf8") != 0)
+      return(TRUE);
+  }
+  return(FALSE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_IsValidEncoding()
+//
+BOOL FileVars_IsValidEncoding(LPFILEVARS lpfv) {
+  CPINFO cpi;
+  if (lpfv->mask & FV_ENCODING &&
+      lpfv->iEncoding >= 0 &&
+      lpfv->iEncoding < COUNTOF(mEncoding)) {
+    if ((mEncoding[lpfv->iEncoding].uFlags & NCP_INTERNAL) ||
+         IsValidCodePage(mEncoding[lpfv->iEncoding].uCodePage) &&
+         GetCPInfo(mEncoding[lpfv->iEncoding].uCodePage,&cpi)) {
+      return(TRUE);
+    }
+  }
+  return(FALSE);
+}
+
+
+//=============================================================================
+//
+//  FileVars_GetEncoding()
+//
+int FileVars_GetEncoding(LPFILEVARS lpfv) {
+  if (lpfv->mask & FV_ENCODING)
+    return(lpfv->iEncoding);
+  else
+    return(-1);
+}
+
+
+//=============================================================================
+//
+//  SciInitThemes()
+//
+//WNDPROC pfnSciWndProc = NULL;
+//
+//FARPROC pfnOpenThemeData = NULL;
+//FARPROC pfnCloseThemeData = NULL;
+//FARPROC pfnDrawThemeBackground = NULL;
+//FARPROC pfnGetThemeBackgroundContentRect = NULL;
+//FARPROC pfnIsThemeActive = NULL;
+//FARPROC pfnDrawThemeParentBackground = NULL;
+//FARPROC pfnIsThemeBackgroundPartiallyTransparent = NULL;
+//
+//BOOL bThemesPresent = FALSE;
+//extern BOOL bIsAppThemed;
+//extern HMODULE hModUxTheme;
+//
+//void SciInitThemes(HWND hwnd)
+//{
+//  if (hModUxTheme) {
+//
+//    pfnOpenThemeData = GetProcAddress(hModUxTheme,"OpenThemeData");
+//    pfnCloseThemeData = GetProcAddress(hModUxTheme,"CloseThemeData");
+//    pfnDrawThemeBackground = GetProcAddress(hModUxTheme,"DrawThemeBackground");
+//    pfnGetThemeBackgroundContentRect = GetProcAddress(hModUxTheme,"GetThemeBackgroundContentRect");
+//    pfnIsThemeActive = GetProcAddress(hModUxTheme,"IsThemeActive");
+//    pfnDrawThemeParentBackground = GetProcAddress(hModUxTheme,"DrawThemeParentBackground");
+//    pfnIsThemeBackgroundPartiallyTransparent = GetProcAddress(hModUxTheme,"IsThemeBackgroundPartiallyTransparent");
+//
+//    pfnSciWndProc = (WNDPROC)SetWindowLongPtrW(hwnd,GWLP_WNDPROC,(LONG_PTR)&SciThemedWndProc);
+//    bThemesPresent = TRUE;
+//  }
+//}
+//
+//
+////=============================================================================
+////
+////  SciThemedWndProc()
+////
+//LRESULT CALLBACK SciThemedWndProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
+//{
+//  static RECT rcContent;
+//
+//  if (umsg == WM_NCCALCSIZE) {
+//    if (wParam) {
+//      LRESULT lresult = CallWindowProcW(pfnSciWndProc,hwnd,WM_NCCALCSIZE,wParam,lParam);
+//      NCCALCSIZE_PARAMS *csp = (NCCALCSIZE_PARAMS*)lParam;
+//
+//      if (bThemesPresent && bIsAppThemed) {
+//        HANDLE hTheme = (HANDLE)pfnOpenThemeData(hwnd,L"edit");
+//        if(hTheme) {
+//          BOOL bSuccess = FALSE;
+//          RECT rcClient;
+//
+//          if(pfnGetThemeBackgroundContentRect(
+//              hTheme,NULL,/*EP_EDITTEXT*/1,/*ETS_NORMAL*/1,&csp->rgrc[0],&rcClient) == S_OK) {
+//            InflateRect(&rcClient,-1,-1);
+//
+//            rcContent.left = rcClient.left-csp->rgrc[0].left;
+//            rcContent.top = rcClient.top-csp->rgrc[0].top;
+//            rcContent.right = csp->rgrc[0].right-rcClient.right;
+//            rcContent.bottom = csp->rgrc[0].bottom-rcClient.bottom;
+//
+//            CopyRect(&csp->rgrc[0],&rcClient);
+//            bSuccess = TRUE;
+//          }
+//          pfnCloseThemeData(hTheme);
+//
+//          if (bSuccess)
+//            return WVR_REDRAW;
+//        }
+//      }
+//      return lresult;
+//    }
+//  }
+//
+//  else if (umsg == WM_NCPAINT) {
+//    LRESULT lresult = CallWindowProcW(pfnSciWndProc,hwnd,WM_NCPAINT,wParam,lParam);
+//    if(bThemesPresent && bIsAppThemed) {
+//
+//      HANDLE hTheme = (HANDLE)pfnOpenThemeData(hwnd,L"edit");
+//      if(hTheme) {
+//        RECT rcBorder;
+//        RECT rcClient;
+//        int nState;
+//
+//        HDC hdc = GetWindowDC(hwnd);
+//
+//        GetWindowRect(hwnd,&rcBorder);
+//        OffsetRect(&rcBorder,-rcBorder.left,-rcBorder.top);
+//
+//        CopyRect(&rcClient,&rcBorder);
+//        rcClient.left += rcContent.left;
+//        rcClient.top += rcContent.top;
+//        rcClient.right -= rcContent.right;
+//        rcClient.bottom -= rcContent.bottom;
+//
+//        ExcludeClipRect(hdc,rcClient.left,rcClient.top,rcClient.right,rcClient.bottom);
+//
+//        if(pfnIsThemeBackgroundPartiallyTransparent(hTheme,/*EP_EDITTEXT*/1,/*ETS_NORMAL*/1))
+//          pfnDrawThemeParentBackground(hwnd,hdc,&rcBorder);
+//
+//        /*
+//        ETS_NORMAL = 1
+//        ETS_HOT = 2
+//        ETS_SELECTED = 3
+//        ETS_DISABLED = 4
+//        ETS_FOCUSED = 5
+//        ETS_READONLY = 6
+//        ETS_ASSIST = 7
+//        */
+//
+//        if(!IsWindowEnabled(hwnd))
+//          nState = /*ETS_DISABLED*/4;
+//        else if (GetFocus() == hwnd)
+//          nState = /*ETS_FOCUSED*/5;
+//        else if(SendMessage(hwnd,SCI_GETREADONLY,0,0))
+//          nState = /*ETS_READONLY*/6;
+//        else
+//          nState = /*ETS_NORMAL*/1;
+//
+//        pfnDrawThemeBackground(hTheme,hdc,/*EP_EDITTEXT*/1,nState,&rcBorder,NULL);
+//        pfnCloseThemeData(hTheme);
+//
+//        ReleaseDC(hwnd,hdc);
+//        return 0;
+//      }
+//    }
+//    return lresult;
+//  }
+//
+//  return CallWindowProcW(pfnSciWndProc,hwnd,umsg,wParam,lParam);
+//}
+
+
+
+///   End of Edit.c   \\\
