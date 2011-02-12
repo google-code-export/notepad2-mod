@@ -3511,14 +3511,14 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
     //case IDM_EDIT_BOOKMARKNEXT:
      case BME_EDIT_BOOKMARKNEXT:
     {
-        int iPos = SendMessage( hwndEdit , SCI_GETCURRENTPOS , 0 , 0);
-        int iLine = SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iPos , 0 );
+        int iPos = (int)SendMessage( hwndEdit , SCI_GETCURRENTPOS , 0 , 0);
+        int iLine = (int)SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iPos , 0 );
 
         int bitmask = 1;
-        int iNextLine = SendMessage( hwndEdit , SCI_MARKERNEXT , iLine+1 , bitmask );
+        int iNextLine = (int)SendMessage( hwndEdit , SCI_MARKERNEXT , iLine+1 , bitmask );
         if( iNextLine == -1 )
         {
-            iNextLine = SendMessage( hwndEdit , SCI_MARKERNEXT , 0 , bitmask );
+            iNextLine = (int)SendMessage( hwndEdit , SCI_MARKERNEXT , 0 , bitmask );
         }
 
         if( iNextLine != -1 )
@@ -3535,15 +3535,15 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
     //case IDM_EDIT_BOOKMARKPREV:
     case BME_EDIT_BOOKMARKPREV:
     {
-        int iPos = SendMessage( hwndEdit , SCI_GETCURRENTPOS , 0 , 0);
-        int iLine = SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iPos , 0 );
+        int iPos = (int)SendMessage( hwndEdit , SCI_GETCURRENTPOS , 0 , 0);
+        int iLine = (int)SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iPos , 0 );
 
         int bitmask = 1;
-        int iNextLine = SendMessage( hwndEdit , SCI_MARKERPREVIOUS , iLine-1 , bitmask );
+        int iNextLine = (int)SendMessage( hwndEdit , SCI_MARKERPREVIOUS , iLine-1 , bitmask );
         if( iNextLine == -1 )
         {
-            int nLines = SendMessage( hwndEdit , SCI_GETLINECOUNT , 0 , 0 );
-            iNextLine = SendMessage( hwndEdit , SCI_MARKERPREVIOUS , nLines , bitmask );
+            int nLines = (int)SendMessage( hwndEdit , SCI_GETLINECOUNT , 0 , 0 );
+            iNextLine = (int)SendMessage( hwndEdit , SCI_MARKERPREVIOUS , nLines , bitmask );
         }
 
         if( iNextLine != -1 )
@@ -3561,10 +3561,10 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
     //case IDM_EDIT_BOOKMARKTOGGLE:
     case BME_EDIT_BOOKMARKTOGGLE:
     {
-        int iPos = SendMessage( hwndEdit , SCI_GETCURRENTPOS , 0 , 0);
-        int iLine = SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iPos , 0 );
+        int iPos = (int)SendMessage( hwndEdit , SCI_GETCURRENTPOS , 0 , 0);
+        int iLine = (int)SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iPos , 0 );
 
-        int bitmask = SendMessage( hwndEdit , SCI_MARKERGET , iLine , 0 );
+        int bitmask = (int)SendMessage( hwndEdit , SCI_MARKERGET , iLine , 0 );
         if( bitmask & 1 )
         {
             // unset
@@ -5023,10 +5023,10 @@ LRESULT MsgNotify(HWND hwnd,WPARAM wParam,LPARAM lParam)
             // Move bookmark along with line if inserting lines (pressing return at beginning of line) because Scintilla does not do this for us
             if( iCurLine > 0 )
             {
-                int iPrevLineLength = SendMessage(hwndEdit,SCI_GETLINEENDPOSITION,iCurLine-1,0) - SendMessage(hwndEdit,SCI_POSITIONFROMLINE,iCurLine-1,0)  ;
+                int iPrevLineLength = (int)SendMessage(hwndEdit,SCI_GETLINEENDPOSITION,iCurLine-1,0) - (int)SendMessage(hwndEdit,SCI_POSITIONFROMLINE,iCurLine-1,0)  ;
                 if( iPrevLineLength == 0 )
                 {
-                    int bitmask = SendMessage( hwndEdit , SCI_MARKERGET , iCurLine-1 , 0 );
+                    int bitmask = (int)SendMessage( hwndEdit , SCI_MARKERGET , iCurLine-1 , 0 );
                     if( bitmask & 1 )
                     {
                         SendMessage( hwndEdit , SCI_MARKERDELETE , iCurLine-1 , 0 );
@@ -6508,11 +6508,11 @@ void UpdateStatusbar()
 
 #ifdef BOOKMARK_EDITION
     // Print number of lines selected lines in statusbar
-    iSelStart = SendMessage( hwndEdit , SCI_GETSELECTIONSTART , 0 , 0 );
-    iSelEnd = SendMessage( hwndEdit , SCI_GETSELECTIONEND , 0 , 0 );
-    iLineStart = SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iSelStart , 0 );
-    iLineEnd = SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iSelEnd , 0 );
-    iStartOfLinePos = SendMessage( hwndEdit , SCI_POSITIONFROMLINE , iLineEnd , 0 );
+    iSelStart = (int)SendMessage( hwndEdit , SCI_GETSELECTIONSTART , 0 , 0 );
+    iSelEnd = (int)SendMessage( hwndEdit , SCI_GETSELECTIONEND , 0 , 0 );
+    iLineStart = (int)SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iSelStart , 0 );
+    iLineEnd = (int)SendMessage( hwndEdit , SCI_LINEFROMPOSITION , iSelEnd , 0 );
+    iStartOfLinePos = (int)SendMessage( hwndEdit , SCI_POSITIONFROMLINE , iLineEnd , 0 );
     iLinesSelected = iLineEnd - iLineStart;
     if( iSelStart != iSelEnd  &&  iStartOfLinePos != iSelEnd ) iLinesSelected += 1;
     wsprintf(tchLinesSelected,L"%i",iLinesSelected);
