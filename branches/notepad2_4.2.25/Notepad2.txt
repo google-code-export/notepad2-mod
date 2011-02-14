@@ -37,7 +37,7 @@ Features
   - Mostly adjustable
 
 
-New in Version 4.2.25-rc2 (released February 03, 2011)
+New in Version 4.2.25-rc3 (released February 13, 2011)
 
   - "Align Lines" with several options (Alt+J)
   - "Modify Lines" supports several variables to insert numbers (Alt+M)
@@ -51,6 +51,7 @@ New in Version 4.2.25-rc2 (released February 03, 2011)
   - Regex syntax for tagged regions simplified from \(...\) to (...)
   - Updated Assembly scheme with x64 and SSE4 instructions
   - Several minor updates to syntax schemes and keywords
+  - Merged caret styles into a single item and added "noblink" option
   - /l command line switch to auto-reload modified files
   - /l- command line switch to disable file change notification
   - Ini-option to specify auto-reload timeout (see FAQ on my website)
