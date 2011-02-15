@@ -23,7 +23,7 @@ The Notepad2 Source Code
 
 Rebuilding from the Source Code
 
-  Notepad2 4.2.25-rc3 is based on Scintilla 2.24 [1].
+  Notepad2 4.2.25-rc4 is based on Scintilla 2.24 [1].
 
   [1] http://www.scintilla.org
 

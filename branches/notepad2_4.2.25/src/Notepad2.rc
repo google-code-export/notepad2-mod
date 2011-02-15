@@ -215,7 +215,7 @@ BEGIN
             MENUITEM "URL &Decode\tCtrl+Shift+R",   IDM_EDIT_URLDECODE
             MENUITEM SEPARATOR
             MENUITEM "Esca&pe C Chars\tCtrl+Alt+E", IDM_EDIT_ESCAPECCHARS
-            MENUITEM "&Unescape C Chars\tCtrl+Alt+U",
+            MENUITEM "&Unescape C Chars\tCtrl+Alt+R",
                                                     IDM_EDIT_UNESCAPECCHARS
             MENUITEM SEPARATOR
             MENUITEM "&Find Matching Brace\tCtrl+B",
@@ -454,6 +454,7 @@ BEGIN
                                                     NOINVERT
     "R",            IDM_FILE_RUN,           VIRTKEY, CONTROL, NOINVERT
     "R",            IDM_EDIT_REMOVEBLANKLINES, VIRTKEY, ALT, NOINVERT
+    "R",            IDM_EDIT_UNESCAPECCHARS, VIRTKEY, CONTROL, ALT, NOINVERT
     "R",            IDM_EDIT_URLDECODE,     VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
     "S",            IDM_FILE_SAVE,          VIRTKEY, CONTROL, NOINVERT
@@ -468,7 +469,6 @@ BEGIN
     "U",            IDM_EDIT_CONVERTLOWERCASE, VIRTKEY, CONTROL, NOINVERT
     "U",            IDM_EDIT_STRIPLASTCHAR, VIRTKEY, ALT, NOINVERT
     "U",            IDM_EDIT_INVERTCASE,    VIRTKEY, CONTROL, ALT, NOINVERT
-    "U",            IDM_EDIT_UNESCAPECCHARS, VIRTKEY, CONTROL, ALT, NOINVERT
     "U",            IDM_EDIT_CONVERTUPPERCASE, VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
     "V",            IDM_EDIT_PASTE,         VIRTKEY, CONTROL, NOINVERT
@@ -1726,24 +1726,24 @@ BEGIN
     63107                   "Whitespace (Colors, Size 0-5)"
     63108                   "Current Line Background (Color)"
     63109                   "Caret (Color, Size 1-3)"
-    63111                   "Long Line Marker (Colors)"
-    63112                   "Extra Line Spacing (Size)"
-    63113                   "2nd Default Style"
-    63114                   "2nd Margins and Line Numbers"
-    63115                   "2nd Matching Braces"
-    63116                   "2nd Matching Braces Error"
-    63117                   "2nd Control Characters (Font)"
-    63118                   "2nd Indentation Guide (Color)"
-    63119                   "2nd Selected Text (Colors)"
+    63110                   "Long Line Marker (Colors)"
+    63111                   "Extra Line Spacing (Size)"
+    63112                   "2nd Default Style"
+    63113                   "2nd Margins and Line Numbers"
+    63114                   "2nd Matching Braces"
+    63115                   "2nd Matching Braces Error"
+    63116                   "2nd Control Characters (Font)"
+    63117                   "2nd Indentation Guide (Color)"
+    63118                   "2nd Selected Text (Colors)"
+    63119                   "2nd Whitespace (Colors, Size 0-5)"
 END
 
 STRINGTABLE
 BEGIN
-    63120                   "2nd Whitespace (Colors, Size 0-5)"
-    63121                   "2nd Current Line Background (Color)"
-    63122                   "2nd Caret (Color, Size 1-3)"
-    63124                   "2nd Long Line Marker (Colors)"
-    63125                   "2nd Extra Line Spacing (Size)"
+    63120                   "2nd Current Line Background (Color)"
+    63121                   "2nd Caret (Color, Size 1-3)"
+    63122                   "2nd Long Line Marker (Colors)"
+    63123                   "2nd Extra Line Spacing (Size)"
     63126                   "Default"
     63127                   "Comment"
     63128                   "Keyword"
