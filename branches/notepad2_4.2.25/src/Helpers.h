@@ -218,6 +218,7 @@ void TransformBackslashes(char*,BOOL);
 
 
 //==== MinimizeToTray Functions - see comments in Helpers.c ===================
+BOOL GetDoAnimateMinimize(VOID);
 VOID MinimizeWndToTray(HWND hWnd);
 VOID RestoreWndFromTray(HWND hWnd);
 

@@ -345,6 +345,7 @@ int flagReuseWindow        = 0;
 int flagMultiFileArg       = 0;
 int flagSingleFileInstance = 0;
 int flagStartAsTrayIcon    = 0;
+int flagAlwaysOnTop        = 0;
 int flagRelativeFileMRU    = 0;
 int flagPortableMyDocs     = 0;
 int flagNoFadeHidden       = 0;
@@ -784,7 +785,7 @@ HWND InitInstance(HINSTANCE hInstance,LPSTR pszCmdLine,int nCmdShow)
     wi.y = rc.top + 16;
     wi.cy = rc.bottom - rc.top - 32;
     wi.cx = min(rc.right - rc.left - 32,wi.cy);
-    wi.x = (flagDefaultPos == 3) ? 16 : rc.right - wi.cx - 16;
+    wi.x = (flagDefaultPos == 3) ? rc.left + 16 : rc.right - wi.cx - 16;
   }
 
   else {
@@ -836,7 +837,7 @@ HWND InitInstance(HINSTANCE hInstance,LPSTR pszCmdLine,int nCmdShow)
   if (wi.max)
     nCmdShow = SW_SHOWMAXIMIZED;
 
-  if (bAlwaysOnTop)
+  if ((bAlwaysOnTop || flagAlwaysOnTop == 2) && flagAlwaysOnTop != 1)
     SetWindowPos(hwndMain,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
 
   if (bTransparentMode)
@@ -2201,7 +2202,7 @@ void MsgInitMenu(HWND hwnd,WPARAM wParam,LPARAM lParam)
   CheckCmd(hmenu,IDM_VIEW_SINGLEFILEINSTANCE,i);
   bStickyWinPos = IniGetInt(L"Settings2",L"StickyWindowPosition",0);
   CheckCmd(hmenu,IDM_VIEW_STICKYWINPOS,bStickyWinPos);
-  CheckCmd(hmenu,IDM_VIEW_ALWAYSONTOP,bAlwaysOnTop);
+  CheckCmd(hmenu,IDM_VIEW_ALWAYSONTOP,((bAlwaysOnTop || flagAlwaysOnTop == 2) && flagAlwaysOnTop != 1));
   CheckCmd(hmenu,IDM_VIEW_MINTOTRAY,bMinimizeToTray);
   CheckCmd(hmenu,IDM_VIEW_TRANSPARENT,bTransparentMode && bTransparentModeAvailable);
   EnableCmd(hmenu,IDM_VIEW_TRANSPARENT,bTransparentModeAvailable);
@@ -2351,13 +2352,11 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
     case IDM_FILE_BROWSE:
       {
         SHELLEXECUTEINFO sei;
-        WCHAR tchParam[MAX_PATH+4];
+        WCHAR tchParam[MAX_PATH+4] = L"";
         WCHAR tchExeFile[MAX_PATH+4];
+        WCHAR tchTemp[MAX_PATH+4];
 
-        lstrcpy(tchParam,szCurFile);
-        PathQuoteSpaces(tchParam);
-
-        if (!IniGetString(L"Settings2",L"filebrowser.exe",L"",tchExeFile,COUNTOF(tchExeFile))) {
+        if (!IniGetString(L"Settings2",L"filebrowser.exe",L"",tchTemp,COUNTOF(tchTemp))) {
           if (!SearchPath(NULL,L"metapath.exe",NULL,COUNTOF(tchExeFile),tchExeFile,NULL)) {
             GetModuleFileName(NULL,tchExeFile,COUNTOF(tchExeFile));
             PathRemoveFileSpec(tchExeFile);
@@ -2365,16 +2364,25 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
           }
         }
 
-        else if (PathIsRelative(tchExeFile)) {
-          WCHAR tch[MAX_PATH];
-          if (!SearchPath(NULL,tchExeFile,NULL,COUNTOF(tch),tch,NULL)) {
-            GetModuleFileName(NULL,tch,COUNTOF(tch));
-            PathRemoveFileSpec(tch);
-            PathAppend(tch,tchExeFile);
-            lstrcpy(tchExeFile,tch);
+        else {
+          ExtractFirstArgument(tchTemp,tchExeFile,tchParam);
+          if (PathIsRelative(tchExeFile)) {
+            if (!SearchPath(NULL,tchExeFile,NULL,COUNTOF(tchTemp),tchTemp,NULL)) {
+              GetModuleFileName(NULL,tchTemp,COUNTOF(tchTemp));
+              PathRemoveFileSpec(tchTemp);
+              PathAppend(tchTemp,tchExeFile);
+              lstrcpy(tchExeFile,tchTemp);
+            }
           }
-          else
-            lstrcpy(tchExeFile,tch);
+        }
+
+        if (lstrlen(tchParam) && lstrlen(szCurFile))
+          StrCatBuff(tchParam,L" ",COUNTOF(tchParam));
+
+        if (lstrlen(szCurFile)) {
+          lstrcpy(tchTemp,szCurFile);
+          PathQuoteSpaces(tchTemp);
+          StrCatBuff(tchParam,tchTemp,COUNTOF(tchParam));
         }
 
         ZeroMemory(&sei,sizeof(SHELLEXECUTEINFO));
@@ -2453,7 +2461,7 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
 
         imax = IsZoomed(hwnd);
 
-        wsprintf(tch,L" -p %i,%i,%i,%i,%i",x,y,cx,cy,imax);
+        wsprintf(tch,L" -pos %i,%i,%i,%i,%i",x,y,cx,cy,imax);
         lstrcat(szParameters,tch);
 
         if (LOWORD(wParam) != IDM_FILE_NEWWINDOW2 && lstrlen(szCurFile)) {
@@ -4054,12 +4062,14 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
 
 
     case IDM_VIEW_ALWAYSONTOP:
-      if (bAlwaysOnTop) {
+      if ((bAlwaysOnTop || flagAlwaysOnTop == 2) && flagAlwaysOnTop != 1) {
         bAlwaysOnTop = 0;
+        flagAlwaysOnTop = 0;
         SetWindowPos(hwnd,HWND_NOTOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
       }
       else {
         bAlwaysOnTop = 1;
+        flagAlwaysOnTop = 0;
         SetWindowPos(hwnd,HWND_TOPMOST,0,0,0,0,SWP_NOMOVE|SWP_NOSIZE);
       }
       break;
@@ -4705,7 +4715,14 @@ LRESULT MsgCommand(HWND hwnd,WPARAM wParam,LPARAM lParam)
           SetClipboardData(CF_UNICODETEXT,hData);
           CloseClipboard();
         }
+
+        UpdateToolbar();
       }
+      break;
+
+
+    case CMD_DEFAULTWINPOS:
+      SnapToDefaultPos(hwnd);
       break;
 
 
@@ -5883,6 +5900,13 @@ void ParseCommandLine()
 
         case L'I':
           flagStartAsTrayIcon = 1;
+          break;
+
+        case L'O':
+          if (*(lp1+1) == L'0' || *(lp1+1) == L'-' || *CharUpper(lp1+1) == L'O')
+            flagAlwaysOnTop = 1;
+          else
+            flagAlwaysOnTop = 2;
           break;
 
         case L'P':
@@ -7421,6 +7445,56 @@ BOOL RelaunchElevated() {
 
     return(TRUE);
   }
+}
+
+
+//=============================================================================
+//
+//  SnapToDefaultPos()
+//
+//  Aligns Notepad2 to the default window position on the current screen
+//
+//
+void SnapToDefaultPos(HWND hwnd)
+{
+  WINDOWPLACEMENT wndpl;
+  HMONITOR hMonitor;
+  MONITORINFO mi;
+  int x,y,cx,cy;
+  RECT rcOld;
+
+  GetWindowRect(hwnd,&rcOld);
+
+  hMonitor = MonitorFromRect(&rcOld,MONITOR_DEFAULTTONEAREST);
+  mi.cbSize = sizeof(mi);
+  GetMonitorInfo(hMonitor,&mi);
+
+  y = mi.rcWork.top + 16;
+  cy = mi.rcWork.bottom - mi.rcWork.top - 32;
+  cx = min(mi.rcWork.right - mi.rcWork.left - 32,cy);
+  x = mi.rcWork.right - cx - 16;
+
+  wndpl.length = sizeof(WINDOWPLACEMENT);
+  wndpl.flags = WPF_ASYNCWINDOWPLACEMENT;
+  wndpl.showCmd = SW_RESTORE;
+
+  wndpl.rcNormalPosition.left = x;
+  wndpl.rcNormalPosition.top = y;
+  wndpl.rcNormalPosition.right = x + cx;
+  wndpl.rcNormalPosition.bottom = y + cy;
+
+  if (EqualRect(&rcOld,&wndpl.rcNormalPosition)) {
+    x = mi.rcWork.left + 16;
+    wndpl.rcNormalPosition.left = x;
+    wndpl.rcNormalPosition.right = x + cx;
+  }
+
+  if (GetDoAnimateMinimize()) {
+    DrawAnimatedRects(hwnd,IDANI_CAPTION,&rcOld,&wndpl.rcNormalPosition);
+    OffsetRect(&wndpl.rcNormalPosition,mi.rcMonitor.left - mi.rcWork.left,mi.rcMonitor.top - mi.rcWork.top);
+  }
+
+  SetWindowPlacement(hwnd,&wndpl);
 }
 
 

@@ -101,6 +101,7 @@ HWND InitInstance(HINSTANCE,LPSTR,int);
 BOOL ActivatePrevInst();
 BOOL RelaunchMultiInst();
 BOOL RelaunchElevated();
+void SnapToDefaultPos(HWND);
 void ShowNotifyIcon(HWND,BOOL);
 void SetNotifyIconTitle(HWND);
 void InstallFileWatching(LPCWSTR);

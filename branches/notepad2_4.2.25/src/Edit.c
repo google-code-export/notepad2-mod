@@ -268,9 +268,6 @@ HWND EditCreate(HWND hwndParent)
   SendMessage(hwnd,SCI_ASSIGNCMDKEY,(SCK_HOME + (SCMOD_SHIFT << 16)),SCI_VCHOMEWRAPEXTEND);
   SendMessage(hwnd,SCI_ASSIGNCMDKEY,(SCK_END + (SCMOD_SHIFT << 16)),SCI_LINEENDWRAPEXTEND);
 
-  // Mute some unused hotkeys to prevent insertion of control characters
-  SendMessage(hwnd,SCI_ASSIGNCMDKEY,('K' + ((SCMOD_CTRL | SCMOD_SHIFT) << 16)),SCI_NULL);
-
   // Init default values for printing
   EditPrintInit();
 

@@ -427,6 +427,8 @@ BEGIN
                                                     NOINVERT
     "K",            IDM_EDIT_SWAP,          VIRTKEY, CONTROL, NOINVERT
     "K",            IDM_FILE_ADDTOFAV,      VIRTKEY, ALT, NOINVERT
+    "K",            CMD_COPYWINPOS,         VIRTKEY, SHIFT, CONTROL,
+                                                    NOINVERT
     "L",            IDM_FILE_LAUNCH,        VIRTKEY, CONTROL, NOINVERT
     "L",            IDM_FILE_OPENWITH,      VIRTKEY, ALT, NOINVERT
     "L",            IDM_VIEW_LONGLINEMARKER, VIRTKEY, SHIFT, CONTROL,
@@ -446,7 +448,7 @@ BEGIN
                                                     NOINVERT
     "P",            IDM_FILE_PRINT,         VIRTKEY, CONTROL, NOINVERT
     "P",            IDM_EDIT_COMPRESSWS,    VIRTKEY, ALT, NOINVERT
-    "P",            CMD_COPYWINPOS,         VIRTKEY, SHIFT, CONTROL,
+    "P",            CMD_DEFAULTWINPOS,      VIRTKEY, SHIFT, CONTROL,
                                                     NOINVERT
     "Q",            IDM_EDIT_LINECOMMENT,   VIRTKEY, CONTROL, NOINVERT
     "Q",            IDM_EDIT_ENCLOSESELECTION, VIRTKEY, ALT, NOINVERT
@@ -1534,7 +1536,7 @@ END
 
 STRINGTABLE
 BEGIN
-    IDS_CMDLINEHELP         "Command Line Help\n\nfile\tMust be the last argument, no quoted spaces by default.\n+\tAccept multiple file arguments (with quoted spaces).\n-\tAccept single file argument (without quoted spaces).\n…\tEncoding (/ansi, /unicode, /unicodebe, /utf8, /utf8sig).\n…\tLine ending mode (/crlf, /lf, /cr).\n/e\tFile source encoding.\n/g\tJump to specified position (/g -1 end of file).\n/m\tMatch specified text (/m- last, /mr regex, /mb backslash).\n/l\tAuto-reload modified files.\n/q\tForce creation of new files without prompt.\n/s\tSelect specified syntax scheme.\n/d\tSelect default text scheme.\n/h\tSelect Web Source Code scheme.\n/x\tSelect XML Document scheme.\n/c\tOpen new window and paste clipboard contents.\n/b\tOpen new paste board to collect clipboard entries.\n/n\tAlways open a new window (/ns single file instance).\n/r\tReuse window (/rs single file instance).\n/p\tSet window position and size (/p0, /ps, /pf,l,t,r,b,m).\n/t\tSet window title.\n/i\tStart as tray icon.\n/f\tSpecify ini-file (/f0 no ini-file).\n/u\tLaunch with elevated privileges.\n/z\tSkip next (usable for registry-based Notepad replacement)."
+    IDS_CMDLINEHELP         "Command Line Help\n\nfile\tMust be the last argument, no quoted spaces by default.\n+\tAccept multiple file arguments (with quoted spaces).\n-\tAccept single file argument (without quoted spaces).\n…\tEncoding (/ansi, /unicode, /unicodebe, /utf8, /utf8sig).\n…\tLine ending mode (/crlf, /lf, /cr).\n/e\tFile source encoding.\n/g\tJump to specified position (/g -1 end of file).\n/m\tMatch specified text (/m- last, /mr regex, /mb backslash).\n/l\tAuto-reload modified files.\n/q\tForce creation of new files without prompt.\n/s\tSelect specified syntax scheme.\n/d\tSelect default text scheme.\n/h\tSelect Web Source Code scheme.\n/x\tSelect XML Document scheme.\n/c\tOpen new window and paste clipboard contents.\n/b\tOpen new paste board to collect clipboard entries.\n/n\tAlways open a new window (/ns single file instance).\n/r\tReuse window (/rs single file instance).\n/p\tSet window position and size (/p0, /ps, /pf,l,t,r,b,m).\n/t\tSet window title.\n/i\tStart as tray icon.\n/o\tKeep window on top.\n/f\tSpecify ini-file (/f0 no ini-file).\n/u\tLaunch with elevated privileges.\n/z\tSkip next (usable for registry-based Notepad replacement)."
 END
 
 STRINGTABLE

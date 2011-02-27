@@ -2341,7 +2341,7 @@ static VOID GetTrayWndRect(LPRECT lpTrayRect)
 }
 
 // Check to see if the animation has been disabled
-static BOOL GetDoAnimateMinimize(VOID)
+/*static */BOOL GetDoAnimateMinimize(VOID)
 {
   ANIMATIONINFO ai;
 

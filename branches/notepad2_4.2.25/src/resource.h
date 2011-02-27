@@ -175,7 +175,8 @@
 #define CMD_JUMP2SELEND                 20031
 #define CMD_COPYPATHNAME                20032
 #define CMD_COPYWINPOS                  20033
-#define CMD_OPENINIFILE                 20034
+#define CMD_DEFAULTWINPOS               20034
+#define CMD_OPENINIFILE                 20035
 #define IDM_FILE_NEW                    40000
 #define IDM_FILE_OPEN                   40001
 #define IDM_FILE_REVERT                 40002
