@@ -63,7 +63,7 @@ BEGIN
             //VALUE "CompanyName", "Florian Balmer"
             VALUE "FileVersion", STRINGIFY(VERSION_MAJOR) ", " STRINGIFY(VERSION_MINOR) ", " STRINGIFY(VERSION_BUILD) ", " STRINGIFY(VERSION_REV)
             VALUE "ProductVersion", STRINGIFY(VERSION_MAJOR) ", " STRINGIFY(VERSION_MINOR) ", " STRINGIFY(VERSION_BUILD) ", " STRINGIFY(VERSION_REV)
-            VALUE "LegalCopyright", "© Florian Balmer 2004-2010"
+            VALUE "LegalCopyright", "© Florian Balmer 2004-2011"
             VALUE "OriginalFilename", "Notepad2.exe"
         END
     END

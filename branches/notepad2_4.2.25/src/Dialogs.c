@@ -249,6 +249,15 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
           SetDlgItemText(hwnd,IDC_EMAIL,wch);
         }
 
+        if (GetDlgItem(hwnd,IDC_MOD_PAGE) == NULL) {
+          SetDlgItemText(hwnd,IDC_MOD_PAGE,VERSION_MODPAGEDISPLAY);
+          ShowWindow(GetDlgItem(hwnd,IDC_MOD_PAGE2),SW_SHOWNORMAL);
+        }
+        else {
+          wsprintf(wch,L"<A>%s</A>",VERSION_MODPAGEDISPLAY);
+          SetDlgItemText(hwnd,IDC_MOD_PAGE,wch);
+        }
+
         CenterDlgInParent(hwnd);
       }
       return TRUE;
@@ -264,8 +273,9 @@ INT_PTR CALLBACK AboutDlgProc(HWND hwnd,UINT umsg,WPARAM wParam,LPARAM lParam)
               if (pnmhdr->idFrom == IDC_WEBPAGE) {
                 ShellExecute(hwnd,L"open",L"http://www.flos-freeware.ch",NULL,NULL,SW_SHOWNORMAL);
               }
-//              else if (pnmhdr->idFrom == IDC_EMAIL) {
-//                ShellExecute(hwnd,L"open",L"mailto:florian.balmer@gmail.com",NULL,NULL,SW_SHOWNORMAL);
+              else if (pnmhdr->idFrom == IDC_EMAIL) {
+                ShellExecute(hwnd,L"open",L"mailto:florian.balmer@gmail.com",NULL,NULL,SW_SHOWNORMAL);
+              }
               else if (pnmhdr->idFrom == IDC_MOD_PAGE) {
                 ShellExecute(hwnd,L"open",L"http://code.google.com/p/notepad2-mod/",NULL,NULL,SW_SHOWNORMAL);
               }
