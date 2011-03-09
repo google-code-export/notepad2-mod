@@ -192,7 +192,7 @@ procedure CurStepChanged(CurStep: TSetupStep);
 begin
   if CurStep = ssInstall then begin
     if IsOldBuildInstalled then begin
-      //UnInstallOldVersion;
+      UnInstallOldVersion;
     end;
   end;
   if CurStep = ssPostInstall then begin
@@ -221,10 +221,9 @@ begin
   if IsModuleLoaded( '{#app_exe}' ) then begin
     MsgBox(ExpandConstant('{cm:msg_AppIsRunning}'), mbError, MB_OK );
     Result := False;
-    Abort;
   end else
-    Result := True;
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#app_name}_is1');
+    Result := True;
 end;
 
 
@@ -235,8 +234,7 @@ begin
     MsgBox(ExpandConstant('{cm:msg_AppIsRunning}'), mbError, MB_OK );
     Result := False;
   end else
-    Result := True;
-
     // Unload the psvince.dll in order to be uninstalled
     UnloadDLL(ExpandConstant('{app}\psvince.dll'));
+    Result := True;
 end;

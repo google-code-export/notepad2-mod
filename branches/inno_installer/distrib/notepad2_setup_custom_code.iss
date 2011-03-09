@@ -39,9 +39,10 @@ end;
 
 function IsOldBuildInstalled(): Boolean;
 begin
-  Result := False;
-  if RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Notepad2') then
-  Result := True;
+  if RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Notepad2') then begin
+    Result := True;
+  end else
+    Result := False;
 end;
 
 
@@ -54,13 +55,14 @@ end;
 // Check if Notepad2's settings exist
 function SettingsExistCheck(): Boolean;
 begin
-  Result := False;
-  if FileExists(ExpandConstant('{userappdata}\Notepad2\Notepad2.ini')) then
-  Result := True;
+  if FileExists(ExpandConstant('{userappdata}\Notepad2\Notepad2.ini')) then begin
+    Result := True;
+  end else
+    Result := False;
 end;
 
 
-(*function UnInstallOldVersion(): Integer;
+function UnInstallOldVersion(): Integer;
 var
   sUnInstPath: String;
   sUnInstallString: String;
@@ -85,14 +87,14 @@ begin
       sUnInstallString := RemoveQuotes(sUnInstallString);
       if Exec(sUnInstallString, '', '', SW_HIDE, ewWaitUntilTerminated, iResultCode) then begin
         Result := 4;
-        //Sleep(600);
+        Sleep(500);
       end else
         Result := 3;
       end else
         Result := 2;
   end else
     Result := 1;
-end;*)
+end;
 
 
 procedure CleanUpSettings();
