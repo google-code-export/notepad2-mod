@@ -17,7 +17,7 @@
 
 #define app_name       "Notepad2"
 #define app_publisher  "XhmikosR"
-#define app_copyright  "Copyright © 2004-2010, Florian Balmer"
+#define app_copyright  "Copyright © 2004-2011, Florian Balmer et all"
 #define app_url        "http://code.google.com/p/notepad2-mod/"
 #define app_exe        "Notepad2.exe"
 
@@ -26,7 +26,7 @@
 #define VerBuild
 #define VerRevision
 
-#expr ParseVersion("..\Release\Notepad2.exe", VerMajor, VerMinor, VerBuild, VerRevision)
+#expr ParseVersion("..\bin\WDK\Release_x86\Notepad2.exe", VerMajor, VerMinor, VerBuild, VerRevision)
 #define app_version    str(VerMajor) + "." + str(VerMinor) + "." + str(VerBuild) + "." + str(VerRevision)
 
 
@@ -109,17 +109,16 @@ Name: remove_default;     Description: {cm:tsk_RemoveDefault};     GroupDescript
 
 
 [Files]
-Source: psvince.dll;                 DestDir: {app}; Flags: ignoreversion
-Source: ..\License.txt;              DestDir: {app}; Flags: ignoreversion
+Source: psvince.dll;                 DestDir: {app};                         Flags: ignoreversion
+Source: ..\License.txt;              DestDir: {app};                         Flags: ignoreversion
 #if is64Bit
-Source: ..\Release_x64\Notepad2.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\bin\WDK\Release_x64\Notepad2.exe; DestDir: {app};                 Flags: ignoreversion
 #else
-Source: ..\Release\Notepad2.exe;     DestDir: {app}; Flags: ignoreversion
+Source: ..\bin\WDK\Release_x86\Notepad2.exe; DestDir: {app};                 Flags: ignoreversion
 #endif
-Source: Notepad2.ini;                DestDir: {userappdata}\Notepad2; Flags: onlyifdoesntexist uninsneveruninstall
-Source: notepad2.redir.ini;          DestDir: {app}; DestName: Notepad2.ini; Flags: ignoreversion
-Source: ..\Notepad2.txt;             DestDir: {app}; Flags: ignoreversion
-Source: ..\Readme-mod.txt;           DestDir: {app}; DestName: Readme.txt; Flags: ignoreversion
+Source: Notepad2.ini;                DestDir: {userappdata}\Notepad2;        Flags: onlyifdoesntexist uninsneveruninstall
+Source: ..\Notepad2.txt;             DestDir: {app};                         Flags: ignoreversion
+Source: ..\Readme-mod.txt;           DestDir: {app}; DestName: Readme.txt;   Flags: ignoreversion
 
 
 [Icons]
@@ -135,6 +134,10 @@ Root: HKLM; Subkey: SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Exec
 ;Root: HKCR; Subkey: Applications\notepad2.exe\shell\open\command; ValueData: """{app}\Notepad2.exe"" %1"; Flags: uninsdeletevalue uninsdeletekeyifempty; Tasks: set_default
 
 
+[INI]
+Filename: {app}\Notepad2.ini; Section: Notepad2; Key: Notepad2.ini; String: %APPDATA%\Notepad2\Notepad2.ini
+
+
 [Run]
 Filename: {app}\{#app_exe}; Description: {cm:LaunchProgram,{#app_name}}; WorkingDir: {app}; Flags: nowait postinstall skipifsilent unchecked
 
@@ -142,6 +145,7 @@ Filename: {app}\{#app_exe}; Description: {cm:LaunchProgram,{#app_name}}; Working
 [InstallDelete]
 Type: files; Name: {userdesktop}\{#app_name}.lnk;   Check: NOT IsTaskSelected('desktopicon\user')   AND IsUpdate()
 Type: files; Name: {commondesktop}\{#app_name}.lnk; Check: NOT IsTaskSelected('desktopicon\common') AND IsUpdate()
+Type: files; Name: {app}\Notepad2.ini;              Check: IsUpdate()
 
 
 [UninstallDelete]
