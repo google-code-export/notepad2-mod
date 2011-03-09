@@ -1,9 +1,9 @@
 (*
 ;* Notepad2 - Installer script
 ;*
-;* Copyright (C) 2010 XhmikosR
+;* Copyright (C) 2010-2011 XhmikosR
 ;*
-;* This file is part of Notepad2.
+;* This file is part of Notepad2-mod.
 ;*
 ;* See License.txt for details.
 
@@ -31,7 +31,7 @@ var
 begin
   Result := False;
   if RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad2.exe', 'Debugger', svalue) then begin
-    if svalue = (ExpandConstant('"{app}\Notepad2.exe" /z')) then
+    if svalue = (ExpandConstant('"{pf}\Notepad2\Notepad2.exe" /z')) then
     Result := True;
   end;
 end;

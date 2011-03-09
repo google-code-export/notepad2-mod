@@ -1,13 +1,13 @@
 ;* Notepad2 - Installer script
 ;*
-;* Copyright (C) 2010 XhmikosR
+;* Copyright (C) 2010-2011 XhmikosR
 ;*
-;* This file is part of Notepad2.
+;* This file is part of Notepad2-mod.
 ;*
 ;* See License.txt for details.
 
 ; Requirements:
-; Inno Setup QuickStart Pack Unicode v5.4.0(+): http://www.jrsoftware.org/isdl.php#qsp
+; Inno Setup v5.4.1(+): http://www.jrsoftware.org/isdl.php#qsp
 
 ; $Id$
 
@@ -87,44 +87,44 @@ BeveledLabel={#app_name} v{#app_version}
 
 
 [CustomMessages]
-en.msg_DeleteSettings=Do you also want to delete Notepad2's settings? %nIf you plan on installing Notepad2 again then you do not have to delete them.
-en.msg_SetupIsRunningWarning=Notepad2 setup is already running!
-en.msg_AppIsRunning=Notepad2 is running! Please close it and run again setup.
-en.tsk_AllUsers=For all users
-en.tsk_CurrentUser=For the current user only
-en.tsk_Other=Other tasks:
-en.tsk_ResetSettings=Reset Notepad2's settings
-en.tsk_RemoveDefault=Restore Windows notepad
-en.tsk_SetDefault=Replace Windows notepad with Notepad2
+en.msg_DeleteSettings        = Do you also want to delete Notepad2's settings? %nIf you plan on installing Notepad2 again then you do not have to delete them.
+en.msg_SetupIsRunningWarning = Notepad2 setup is already running!
+en.msg_AppIsRunning          = Notepad2 is running! Please close it and run again setup.
+en.tsk_AllUsers              = For all users
+en.tsk_CurrentUser           = For the current user only
+en.tsk_Other                 = Other tasks:
+en.tsk_ResetSettings         = Reset Notepad2's settings
+en.tsk_RemoveDefault         = Restore Windows notepad
+en.tsk_SetDefault            = Replace Windows notepad with Notepad2
 
 
 [Tasks]
-Name: desktopicon; Description: {cm:CreateDesktopIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
-Name: desktopicon\user; Description: {cm:tsk_CurrentUser}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
-Name: desktopicon\common; Description: {cm:tsk_AllUsers}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
-Name: quicklaunchicon; Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked; OnlyBelowVersion: 0,6.01
-Name: reset_settings; Description: {cm:tsk_ResetSettings}; GroupDescription: {cm:tsk_Other}; Check: SettingsExistCheck(); Flags: checkedonce unchecked
-Name: set_default; Description: {cm:tsk_SetDefault}; GroupDescription: {cm:tsk_Other}; Check: DefaulNotepadCheck()
-Name: remove_default; Description: {cm:tsk_RemoveDefault}; GroupDescription: {cm:tsk_Other}; Check: NOT DefaulNotepadCheck(); Flags: checkedonce unchecked
+Name: desktopicon;        Description: {cm:CreateDesktopIcon};     GroupDescription: {cm:AdditionalIcons}; Flags: unchecked
+Name: desktopicon\user;   Description: {cm:tsk_CurrentUser};       GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
+Name: desktopicon\common; Description: {cm:tsk_AllUsers};          GroupDescription: {cm:AdditionalIcons}; Flags: unchecked exclusive
+Name: quicklaunchicon;    Description: {cm:CreateQuickLaunchIcon}; GroupDescription: {cm:AdditionalIcons}; Flags: unchecked;             OnlyBelowVersion: 0,6.01
+Name: reset_settings;     Description: {cm:tsk_ResetSettings};     GroupDescription: {cm:tsk_Other};       Flags: checkedonce unchecked; Check: SettingsExistCheck()
+Name: set_default;        Description: {cm:tsk_SetDefault};        GroupDescription: {cm:tsk_Other};                                     Check: DefaulNotepadCheck()
+Name: remove_default;     Description: {cm:tsk_RemoveDefault};     GroupDescription: {cm:tsk_Other};       Flags: checkedonce unchecked; Check: NOT DefaulNotepadCheck()
 
 
 [Files]
-Source: psvince.dll; DestDir: {app}; Flags: ignoreversion
-Source: ..\License.txt; DestDir: {app}; Flags: ignoreversion
+Source: psvince.dll;                 DestDir: {app}; Flags: ignoreversion
+Source: ..\License.txt;              DestDir: {app}; Flags: ignoreversion
 #if is64Bit
 Source: ..\Release_x64\Notepad2.exe; DestDir: {app}; Flags: ignoreversion
 #else
-Source: ..\Release\Notepad2.exe; DestDir: {app}; Flags: ignoreversion
+Source: ..\Release\Notepad2.exe;     DestDir: {app}; Flags: ignoreversion
 #endif
-Source: Notepad2.ini; DestDir: {userappdata}\Notepad2; Flags: onlyifdoesntexist uninsneveruninstall
-Source: notepad2.redir.ini; DestDir: {app}; DestName: Notepad2.ini; Flags: ignoreversion
-Source: ..\Notepad2.txt; DestDir: {app}; Flags: ignoreversion
-Source: ..\Readme-mod.txt; DestDir: {app}; DestName: Readme.txt; Flags: ignoreversion
+Source: Notepad2.ini;                DestDir: {userappdata}\Notepad2; Flags: onlyifdoesntexist uninsneveruninstall
+Source: notepad2.redir.ini;          DestDir: {app}; DestName: Notepad2.ini; Flags: ignoreversion
+Source: ..\Notepad2.txt;             DestDir: {app}; Flags: ignoreversion
+Source: ..\Readme-mod.txt;           DestDir: {app}; DestName: Readme.txt; Flags: ignoreversion
 
 
 [Icons]
 Name: {commondesktop}\{#app_name}; Filename: {app}\{#app_exe}; Tasks: desktopicon\common; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\{#app_exe}; IconIndex: 0
-Name: {userdesktop}\{#app_name}; Filename: {app}\{#app_exe}; Tasks: desktopicon\user; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\{#app_exe}; IconIndex: 0
+Name: {userdesktop}\{#app_name};   Filename: {app}\{#app_exe}; Tasks: desktopicon\user;   Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\{#app_exe}; IconIndex: 0
 Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#app_name}; Filename: {app}\{#app_exe}; Tasks: quicklaunchicon; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; IconFilename: {app}\{#app_exe}; IconIndex: 0
 
 
@@ -140,7 +140,7 @@ Filename: {app}\{#app_exe}; Description: {cm:LaunchProgram,{#app_name}}; Working
 
 
 [InstallDelete]
-Type: files; Name: {userdesktop}\{#app_name}.lnk; Check: NOT IsTaskSelected('desktopicon\user') AND IsUpdate()
+Type: files; Name: {userdesktop}\{#app_name}.lnk;   Check: NOT IsTaskSelected('desktopicon\user')   AND IsUpdate()
 Type: files; Name: {commondesktop}\{#app_name}.lnk; Check: NOT IsTaskSelected('desktopicon\common') AND IsUpdate()
 
 
