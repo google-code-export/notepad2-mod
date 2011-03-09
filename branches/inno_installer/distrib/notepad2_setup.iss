@@ -13,12 +13,9 @@
 
 
 ;To compile the 64bit version, change the following to "true"
-#define is64bit =      false
+;#define is64bit
 
 #define app_name       "Notepad2"
-#define app_publisher  "XhmikosR"
-#define app_copyright  "Copyright © 2004-2011, Florian Balmer et all"
-#define app_url        "http://code.google.com/p/notepad2-mod/"
 #define app_exe        "Notepad2.exe"
 
 #define VerMajor
@@ -31,7 +28,7 @@
 
 
 [Setup]
-#if is64bit
+#if defined is64bit
 UninstallDisplayName={#= app_name} v{#= app_version} x64
 OutputBaseFilename={#= app_name}_{#app_version}.x64
 ArchitecturesAllowed=x64
@@ -44,14 +41,14 @@ AppId={#= app_name}
 AppName={#= app_name}
 AppVersion={#app_version}
 AppVerName={#= app_name} v{#app_version}
-AppPublisher={#app_publisher}
-AppPublisherURL={#app_url}
-AppSupportURL={#app_url}
-AppUpdatesURL={#app_url}
-AppContact={#app_url}
-AppCopyright={#app_copyright}
-VersionInfoCompany={#app_publisher}
-VersionInfoCopyright={#app_copyright}
+AppPublisher=XhmikosR
+AppPublisherURL=http://code.google.com/p/notepad2-mod/
+AppSupportURL=http://code.google.com/p/notepad2-mod/
+AppUpdatesURL=http://code.google.com/p/notepad2-mod/
+AppContact=http://code.google.com/p/notepad2-mod/
+AppCopyright=Copyright © 2004-2011, Florian Balmer et all
+VersionInfoCompany=XhmikosR
+VersionInfoCopyright=Copyright © 2004-2011, Florian Balmer et all
 VersionInfoDescription={#= app_name} v{#app_version} Setup
 VersionInfoTextVersion={#app_version}
 VersionInfoVersion={#app_version}
@@ -111,7 +108,7 @@ Name: remove_default;     Description: {cm:tsk_RemoveDefault};     GroupDescript
 [Files]
 Source: psvince.dll;                 DestDir: {app};                         Flags: ignoreversion
 Source: ..\License.txt;              DestDir: {app};                         Flags: ignoreversion
-#if is64Bit
+#if defined is64bit
 Source: ..\bin\WDK\Release_x64\Notepad2.exe; DestDir: {app};                 Flags: ignoreversion
 #else
 Source: ..\bin\WDK\Release_x86\Notepad2.exe; DestDir: {app};                 Flags: ignoreversion
