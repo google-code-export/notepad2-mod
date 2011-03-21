@@ -59,8 +59,8 @@ LIBS        = $(LIBS) msvcrt_win2003.obj
 RFLAGS      = $(RFLAGS) /d "_WIN64"
 !ELSE
 CXXFLAGS    = $(CXXFLAGS) /D "WIN32" /D "_WIN32_WINNT=0x0501"
-LDFLAGS     = $(LDFLAGS) /SUBSYSTEM:WINDOWS,5.01 /MACHINE:X86
-LIBS        = $(LIBS) msvcrt_winxp.obj
+LDFLAGS     = $(LDFLAGS) /SUBSYSTEM:WINDOWS,5.0 /MACHINE:X86
+LIBS        = $(LIBS) msvcrt_win2000.obj
 RFLAGS      = $(RFLAGS) /d "WIN32"
 !ENDIF
 

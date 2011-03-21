@@ -17,6 +17,15 @@ SETLOCAL
 CD /D %~dp0
 
 rem Check the building environment
+IF "%PROGRAMFILES(x86)%zzz"=="zzz" (
+  SET "U_=HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall"
+) ELSE (
+  SET "U_=HKLM\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall"
+)
+
+FOR /F "delims=" %%a IN (
+  'REG QUERY "%U_%\Inno Setup 5_is1" /v "Inno Setup: App Path"2^>Nul^|FIND "REG_"') DO (
+  SET "InnoSetupPath=%%a" & CALL :SubInnoSetupPath %%InnoSetupPath:*Z=%%)
 
 rem check for the help switches
 IF /I "%~1"=="help" GOTO SHOWHELP
@@ -155,8 +164,11 @@ PUSHD "..\distrib"
 
 TITLE Building %BINDIR% installer...
 CALL :SUBMSG "INFO" "Building %BINDIR% installer..."
+
+
 POPD
 EXIT /B
+
 
 :SUBMSG
 ECHO. & ECHO ______________________________
@@ -168,3 +180,8 @@ IF /I "%~1"=="ERROR" (
 ) ELSE (
   EXIT /B
 )
+
+
+:SubInnoSetupPath
+SET InnoSetupPath=%*
+EXIT /B

@@ -29,10 +29,13 @@ function DefaulNotepadCheck(): Boolean;
 var
   svalue: String;
 begin
-  Result := False;
   if RegQueryStringValue(HKLM, 'SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\notepad2.exe', 'Debugger', svalue) then begin
-    if svalue = (ExpandConstant('"{pf}\Notepad2\Notepad2.exe" /z')) then
-    Result := True;
+    if svalue = (ExpandConstant('"{pf}\Notepad2\Notepad2.exe" /z')) then begin
+      Result := True;
+    end
+    else begin
+      Result := False;
+    end;
   end;
 end;
 

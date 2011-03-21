@@ -7,12 +7,13 @@
 ;* See License.txt for details.
 
 ; Requirements:
-; Inno Setup v5.4.1(+): http://www.jrsoftware.org/isdl.php#qsp
+; Inno Setup v5.4.1(+): http://www.jrsoftware.org/isdl.php
 
 ; $Id$
 
 
-;To compile the 64bit version, change the following to "true"
+
+;To compile the 64bit version, uncomment the following define
 ;#define is64bit
 
 #define app_name       "Notepad2"
@@ -29,18 +30,19 @@
 
 [Setup]
 #if defined is64bit
-UninstallDisplayName={#= app_name} v{#= app_version} x64
-OutputBaseFilename={#= app_name}_{#app_version}.x64
+UninstallDisplayName={#app_name} v{#app_version} x64
+OutputBaseFilename={#app_name}_{#app_version}.x64
 ArchitecturesAllowed=x64
 ArchitecturesInstallIn64BitMode=x64
 #else
-UninstallDisplayName={#= app_name} v{#= app_version}
-OutputBaseFilename={#= app_name}_{#app_version}.x86
+UninstallDisplayName={#app_name} v{#app_version}
+OutputBaseFilename={#app_name}_{#app_version}.x86
+ArchitecturesAllowed=x86
 #endif
-AppId={#= app_name}
-AppName={#= app_name}
+AppId={#app_name}
+AppName={#app_name}
 AppVersion={#app_version}
-AppVerName={#= app_name} v{#app_version}
+AppVerName={#app_name} v{#app_version}
 AppPublisher=XhmikosR
 AppPublisherURL=http://code.google.com/p/notepad2-mod/
 AppSupportURL=http://code.google.com/p/notepad2-mod/
@@ -49,7 +51,7 @@ AppContact=http://code.google.com/p/notepad2-mod/
 AppCopyright=Copyright © 2004-2011, Florian Balmer et all
 VersionInfoCompany=XhmikosR
 VersionInfoCopyright=Copyright © 2004-2011, Florian Balmer et all
-VersionInfoDescription={#= app_name} v{#app_version} Setup
+VersionInfoDescription={#app_name} v{#app_version} Setup
 VersionInfoTextVersion={#app_version}
 VersionInfoVersion={#app_version}
 VersionInfoProductName={#app_name}
@@ -61,8 +63,8 @@ LicenseFile=..\License.txt
 OutputDir=.
 SetupIconFile=..\res\Notepad2.ico
 WizardSmallImageFile=WizardSmallImageFile.bmp
-Compression=lzma2/ultra64
-InternalCompressLevel=normal
+Compression=lzma2/ultra
+InternalCompressLevel=ultra
 SolidCompression=yes
 EnableDirDoesntExistWarning=no
 AllowNoIcons=yes
@@ -84,9 +86,9 @@ BeveledLabel={#app_name} v{#app_version}
 
 
 [CustomMessages]
-en.msg_DeleteSettings        = Do you also want to delete Notepad2's settings? %nIf you plan on installing Notepad2 again then you do not have to delete them.
-en.msg_SetupIsRunningWarning = Notepad2 setup is already running!
 en.msg_AppIsRunning          = Notepad2 is running! Please close it and run again setup.
+en.msg_DeleteSettings        = Do you also want to delete Notepad2's settings? %n%nIf you plan on installing Notepad2 again then you do not have to delete them.
+en.msg_SetupIsRunningWarning = Notepad2 setup is already running!
 en.tsk_AllUsers              = For all users
 en.tsk_CurrentUser           = For the current user only
 en.tsk_Other                 = Other tasks:
