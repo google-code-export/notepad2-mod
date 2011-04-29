@@ -42,7 +42,8 @@ end;
 
 function IsOldBuildInstalled(): Boolean;
 begin
-  if RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Notepad2') then begin
+  if RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Notepad2') AND
+   FileExists(ExpandConstant('{pf}\Notepad2\Notepad2.inf')) then begin
     Result := True;
   end else
     Result := False;

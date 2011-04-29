@@ -7,22 +7,66 @@
 ;* See License.txt for details.
 
 ; Requirements:
-; Inno Setup v5.4.1(+): http://www.jrsoftware.org/isdl.php
+; Inno Setup v5.4.2(+): http://www.jrsoftware.org/isdl.php
 
 ; $Id$
 
 
+;#define ICL12
+;#define VS2010
+;#define WDK
 
-;To compile the 64bit version, uncomment the following define
-;#define is64bit
+; Various build checks
+#if !defined(ICL12) && !defined(VS2010) && !defined(WDK)
+  #error You need to define ICL12 or VS2010 or WDK first
+#endif
+
+
+#if defined(ICL12) && (defined(VS2010) || defined(WDK))
+  #error You can't define ICL12 and at the same time
+#endif
+
+#if defined(WDK) && (defined(ICL12) || defined(VS2010))
+  #error You can't use two defines at the same time
+#endif
+
+#if defined(VS2010) && (defined(VS2010) || defined(ICL12))
+  #error You can't define WDK and at the same time
+#endif
+
+
+
+#if defined(ICL12)
+  #if defined(is64bit)
+    #define bindir '..\bin\ICL12\Release_x64'
+  #else
+    #define bindir '..\bin\ICL12\Release_x86'
+  #endif
+#elif defined(VS2010)
+  #if defined(is64bit)
+    #define bindir '..\bin\VS2010\Release_x64'
+  #else
+    #define bindir '..\bin\VS2010\Release_x86'
+  #endif
+#elif defined (WDK)
+  #if defined(is64bit)
+    #define bindir '..\bin\WDK\Release_x64'
+  #else
+    #define bindir '..\bin\WDK\Release_x86'
+  #endif
+#endif
+
 
 #define app_name       "Notepad2"
-#define app_exe        "Notepad2.exe"
 
 #define VerMajor
 #define VerMinor
 #define VerBuild
 #define VerRevision
+
+#if VER < 0x05040200
+  #error Update your Inno Setup version
+#endif
 
 #expr ParseVersion("..\bin\WDK\Release_x86\Notepad2.exe", VerMajor, VerMinor, VerBuild, VerRevision)
 #define app_version    str(VerMajor) + "." + str(VerMinor) + "." + str(VerBuild) + "." + str(VerRevision)
@@ -57,7 +101,7 @@ VersionInfoVersion={#app_version}
 VersionInfoProductName={#app_name}
 VersionInfoProductVersion={#app_version}
 VersionInfoProductTextVersion={#app_version}
-UninstallDisplayIcon={app}\{#app_exe}
+UninstallDisplayIcon={app}\Notepad2.exe
 DefaultDirName={pf}\{#app_name}
 LicenseFile=..\License.txt
 OutputDir=.
@@ -108,22 +152,18 @@ Name: remove_default;     Description: {cm:tsk_RemoveDefault};     GroupDescript
 
 
 [Files]
-Source: psvince.dll;                 DestDir: {app};                         Flags: ignoreversion
-Source: ..\License.txt;              DestDir: {app};                         Flags: ignoreversion
-#if defined is64bit
-Source: ..\bin\WDK\Release_x64\Notepad2.exe; DestDir: {app};                 Flags: ignoreversion
-#else
-Source: ..\bin\WDK\Release_x86\Notepad2.exe; DestDir: {app};                 Flags: ignoreversion
-#endif
-Source: Notepad2.ini;                DestDir: {userappdata}\Notepad2;        Flags: onlyifdoesntexist uninsneveruninstall
-Source: ..\Notepad2.txt;             DestDir: {app};                         Flags: ignoreversion
-Source: ..\Readme-mod.txt;           DestDir: {app}; DestName: Readme.txt;   Flags: ignoreversion
+Source: psvince.dll;            DestDir: {app};                       Flags: ignoreversion
+Source: ..\License.txt;         DestDir: {app};                       Flags: ignoreversion
+Source: {#bindir}\Notepad2.exe; DestDir: {app};                       Flags: ignoreversion
+Source: Notepad2.ini;           DestDir: {userappdata}\Notepad2;      Flags: onlyifdoesntexist uninsneveruninstall
+Source: ..\Notepad2.txt;        DestDir: {app};                       Flags: ignoreversion
+Source: ..\Readme-mod.txt;      DestDir: {app}; DestName: Readme.txt; Flags: ignoreversion
 
 
 [Icons]
-Name: {commondesktop}\{#app_name}; Filename: {app}\{#app_exe}; Tasks: desktopicon\common; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\{#app_exe}; IconIndex: 0
-Name: {userdesktop}\{#app_name};   Filename: {app}\{#app_exe}; Tasks: desktopicon\user;   Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\{#app_exe}; IconIndex: 0
-Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#app_name}; Filename: {app}\{#app_exe}; Tasks: quicklaunchicon; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; IconFilename: {app}\{#app_exe}; IconIndex: 0
+Name: {commondesktop}\{#app_name}; Filename: {app}\Notepad2.exe; Tasks: desktopicon\common; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\Notepad2.exe; IconIndex: 0
+Name: {userdesktop}\{#app_name};   Filename: {app}\Notepad2.exe; Tasks: desktopicon\user;   Comment: {#app_name} v{#app_version}; WorkingDir: {app}; AppUserModelID: Notepad2; IconFilename: {app}\Notepad2.exe; IconIndex: 0
+Name: {userappdata}\Microsoft\Internet Explorer\Quick Launch\{#app_name}; Filename: {app}\Notepad2.exe; Tasks: quicklaunchicon; Comment: {#app_name} v{#app_version}; WorkingDir: {app}; IconFilename: {app}\Notepad2.exe; IconIndex: 0
 
 
 [Registry]
@@ -138,7 +178,7 @@ Filename: {app}\Notepad2.ini; Section: Notepad2; Key: Notepad2.ini; String: %APP
 
 
 [Run]
-Filename: {app}\{#app_exe}; Description: {cm:LaunchProgram,{#app_name}}; WorkingDir: {app}; Flags: nowait postinstall skipifsilent unchecked
+Filename: {app}\Notepad2.exe; Description: {cm:LaunchProgram,{#app_name}}; WorkingDir: {app}; Flags: nowait postinstall skipifsilent unchecked
 
 
 [InstallDelete]
@@ -217,23 +257,27 @@ end;
 
 function InitializeSetup(): Boolean;
 begin
-  if IsModuleLoaded( '{#app_exe}' ) then begin
+  if IsModuleLoaded( 'Notepad2.exe' ) then begin
     MsgBox(ExpandConstant('{cm:msg_AppIsRunning}'), mbError, MB_OK );
     Result := False;
-  end else
+  end
+  else begin
     is_update := RegKeyExists(HKLM, 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{#app_name}_is1');
     Result := True;
+  end;
 end;
 
 
 function InitializeUninstall(): Boolean;
 begin
   // Check if app is running during uninstallation
-  if IsModuleLoadedU( '{#app_exe}' ) then begin
+  if IsModuleLoadedU( 'Notepad2.exe' ) then begin
     MsgBox(ExpandConstant('{cm:msg_AppIsRunning}'), mbError, MB_OK );
     Result := False;
-  end else
+  end
+  else begin
     // Unload the psvince.dll in order to be uninstalled
     UnloadDLL(ExpandConstant('{app}\psvince.dll'));
     Result := True;
+  end;
 end;
