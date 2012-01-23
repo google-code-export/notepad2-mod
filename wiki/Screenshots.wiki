@@ -23,7 +23,7 @@ http://notepad2-mod.googlecode.com/files/notepad2_screenshot_ahk.png
 http://notepad2-mod.googlecode.com/files/notepad2_screenshot_au3.png
 
 
-===AviSynth Highlighting===
+===!AviSynth Highlighting===
 
 http://notepad2-mod.googlecode.com/files/notepad2_screenshot_avs.png
 
