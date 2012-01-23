@@ -5,12 +5,12 @@ _Here you can find a few screenshots of the various syntax schemes of Notepad2-m
 
 ===C Highlighting/code Folding===
 
-http://notepad2-mod.googlecode.com/files/notepad2_screenshot_1.png
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_c.png
 
 
 ===NFO ANSI Art===
 
-http://notepad2-mod.googlecode.com/files/notepad2_screenshot_2.png
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_nfo.png
 
 
 ===!AutoHotkey Highlighting===
@@ -21,6 +21,11 @@ http://notepad2-mod.googlecode.com/files/notepad2_screenshot_ahk.png
 ===AU3 Highlighting===
 
 http://notepad2-mod.googlecode.com/files/notepad2_screenshot_au3.png
+
+
+===AviSynth Highlighting===
+
+http://notepad2-mod.googlecode.com/files/notepad2_screenshot_avs.png
 
 
 ===Inno Setup Highlighting===
